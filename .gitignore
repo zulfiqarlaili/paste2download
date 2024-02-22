@@ -1,27 +1,10 @@
-# Node.js related
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# Svelte & build output
-public/build/
-public/global.css
-
-# IDEs and text editors
-.idea/
-*.sublime*
-.vscode/
-*.swp
-*.swo
-
-# OS related
 .DS_Store
-Thumbs.db
-
-# Optional - Environment variables
+node_modules
+/build
+/.svelte-kit
+/package
 .env
 .env.*
-.env.local
-
-# Optional - Debug logs
-*.log
+!.env.example
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
