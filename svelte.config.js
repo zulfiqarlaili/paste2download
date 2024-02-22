@@ -1,5 +1,10 @@
 import adapter from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+const path = fileURLToPath(new URL('package.json', import.meta.url));
+const pkg = JSON.parse(readFileSync(path, 'utf8'));
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -13,8 +18,9 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter(),
 		alias: {
-			"@/*": "./path/to/lib/*",
-		  },
+			'@/*': './path/to/lib/*'
+		},
+		version: { name: pkg.version }
 	}
 };
 

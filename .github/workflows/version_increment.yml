@@ -1,0 +1,43 @@
+name: Version Increment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  increment_version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Read current version
+        id: read_version
+        run: echo "::set-output name=version::$(node -p -e "require('./package.json').version")"
+
+      - name: Increment version
+        id: increment_version
+        run: |
+          current_version="${{ steps.read_version.outputs.version }}"
+          major=$(echo $current_version | cut -d. -f1)
+          minor=$(echo $current_version | cut -d. -f2)
+          patch=$(echo $current_version | cut -d. -f3)
+          new_version="$major.$minor.$((patch + 1))"
+          echo "::set-output name=new_version::$new_version"
+
+      - name: Update package.json with new version
+        run: |
+          jq --arg new_version "${{ steps.increment_version.outputs.new_version }}" '.version = $new_version' package.json > tmp.json && mv tmp.json package.json
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -am "Increment version to ${{ steps.increment_version.outputs.new_version }}"
+          git push https://github.com/${{ github.repository }}.git HEAD:main
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}

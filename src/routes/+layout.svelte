@@ -7,6 +7,7 @@
 	import { toggleMode } from 'mode-watcher';
 	import AOS from 'aos';
 	import { onMount } from 'svelte';
+	import { version } from '$app/environment';
 
 	onMount(() => {
 		AOS.init();
@@ -26,3 +27,4 @@
 </div>
 <ModeWatcher />
 <slot />
+<small class="text-sm text-muted-foreground">v{version}</small>
