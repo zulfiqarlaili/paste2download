@@ -8,6 +8,7 @@
 	import AOS from 'aos';
 	import { onMount } from 'svelte';
 	import { version } from '$app/environment';
+	import { Toaster } from "$lib/components/ui/sonner";
 
 	onMount(() => {
 		AOS.init();
@@ -26,5 +27,6 @@
 	</Button>
 </div>
 <ModeWatcher />
+<Toaster />
 <slot />
 <small class="text-sm text-muted-foreground">v{version}</small>

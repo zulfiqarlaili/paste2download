@@ -27,7 +27,8 @@
 		<Button
 			class="w-36 bg-gradient-to-r from-blue-500 to-teal-400"
 			data-aos="fade-up"
-			data-aos-delay="300">Get Started</Button
+			data-aos-delay="300"
+			href='/paste-link'>Get Started</Button
 		>
 
 		<Separator class="my-8" />
