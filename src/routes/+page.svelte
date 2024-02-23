@@ -3,7 +3,7 @@
 	import { Separator } from '$lib/components/ui/separator';
 </script>
 
-<div class="mt-20 flex h-screen justify-center">
+<div class="mt-20 flex min-h-screen justify-center">
 	<div class="mx-auto max-w-screen-xl px-4 py-8 text-center lg:px-12 lg:py-16">
 		<h1
 			class="leading-tighter mb-4 text-5xl font-extrabold tracking-tighter md:text-6xl"
@@ -37,10 +37,11 @@
 			>
 				How does it work
 			</h2>
-			<p class="text-sm text-muted-foreground">
+			<p class="mx-auto max-w-[30rem] text-sm text-muted-foreground">
 				Paste a video link to get started; mostly TikTok have watermark in their videos that we want
 				to remove; paste and let the magic happen
 			</p>
 		</div>
 	</div>
 </div>
+
