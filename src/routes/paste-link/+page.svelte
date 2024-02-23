@@ -6,26 +6,32 @@
 
 	let link: string = '';
 
-	function isValidLink(link: string): boolean {
+	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S+/;
 		return linkRegex.test(link);
-	}
+	};
 
-	async function pasteFromClipboard() {
+	const pasteFromClipboard = async () => {
 		const clipText = await navigator.clipboard.readText();
 		link = clipText;
-	}
+		handleLinkValidation();
+	};
 
-	function handleSubmit() {
-		if (isValidLink(link)) {
-			toast.loading('Event has been created', {
-				description: 'Sunday, December 03, 2023 at 9:00 AM',
+	const handleLinkValidation = () => {
+		if (!isValidLink(link)) {
+			toast.error('Invalid link', {
+				description: 'Please enter a valid link',
 				position: 'top-right'
 			});
-		} else {
-			toast('not valid link');
 		}
-	}
+	};
+
+	const handleSubmit = () => {
+		toast.loading('Downloading...',{
+            description: 'Please wait',
+            position: 'top-right'
+        });
+	};
 </script>
 
 <div class="flex h-screen items-center justify-center">
@@ -43,9 +49,9 @@
 				class="absolute right-0 top-0 "
 				on:click={pasteFromClipboard}
 			>
-				<ClipboardPaste class="h-4 w-4"/>
+				<ClipboardPaste class="h-4 w-4" />
 			</Button>
 		</div>
-		<Button type="submit">Download</Button>
+		<Button disabled={!isValidLink(link)} type="submit">Download</Button>
 	</form>
 </div>
