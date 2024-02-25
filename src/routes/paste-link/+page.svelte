@@ -7,10 +7,9 @@
 	import { Separator } from '$lib/components/ui/separator';
 
 	let link: string = '';
-	// let thumbNail: string = '';
-	let thumbNail: string =
-		'https://p19-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/5c13f0523860440f9e142220ae5a9e79_1701790701~tplv-tiktokx-360p.webp?lk3s=d05b14bd&x-expires=1708963200&x-signature=5FuJ5Bg6Xr4RDo6%2F66h%2FCZ7HqFQ%3D&s=FEED&se=false&sh=&sc=feed_cover&l=202402251651459C7058717E4D4BF142BA';
+	let thumbNail: string = '';
 	let title: string = '';
+	let downloadUrl: string = '';
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S+/;
@@ -44,7 +43,51 @@
 			console.log(res);
 			thumbNail = res.thumbnail;
 			title = res.title;
+			downloadUrl = res.download_url;
 		});
+	};
+
+	const handleDownload = async () => {
+		try {
+			const response = await fetch(downloadUrl);
+			const contentType = response.headers.get('content-type');
+			const getFileExtension = (contentType: any) => {
+				const videoFormats = {
+					'video/webm': '.webm',
+					'video/ogg': '.ogg',
+					'video/mp4': '.mp4',
+					'video/x-matroska': '.mkv',
+					'video/quicktime': '.mov',
+					'video/x-msvideo': '.avi',
+					'video/x-ms-wmv': '.wmv',
+					'video/mpeg': '.mpeg'
+				};
+
+				for (const [key, value] of Object.entries(videoFormats)) {
+					if (contentType && contentType.includes(key)) {
+						return value;
+					}
+				}
+
+				return '.mp4'; // Default to .mp4 if content type is unknown
+			};
+			const fileExtension = getFileExtension(contentType);
+			const fileName = `${title
+				.replaceAll(' ', '_')
+				.replace(/[^\x00-\x7F]/g, '')
+				.replace(/#[a-z0-9_]+/gi, '')}${fileExtension}`;
+			const blob = await response.blob();
+			const anchorElement = document.createElement('a');
+			anchorElement.href = window.URL.createObjectURL(blob);
+			anchorElement.download = fileName;
+			document.body.appendChild(anchorElement);
+			await anchorElement.click(); // Wait for the click to resolve
+			document.body.removeChild(anchorElement);
+		} catch (error) {
+			toast.error('Error downloading the video', {
+				position: 'top-right'
+			});
+		}
 	};
 </script>
 
@@ -75,6 +118,7 @@
 				<img src={thumbNail} alt={title} class="rounded-lg" />
 				<button
 					class="absolute inset-0 flex items-center justify-center rounded-lg bg-black bg-opacity-40 p-2 text-white dark:text-gray-300 sm:opacity-100 lg:opacity-0 lg:hover:opacity-100"
+					on:click={handleDownload}
 				>
 					<DownloadIcon class="h-12 w-12" />
 				</button>
