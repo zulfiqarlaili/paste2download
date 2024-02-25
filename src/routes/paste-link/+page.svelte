@@ -81,7 +81,7 @@
 			anchorElement.href = window.URL.createObjectURL(blob);
 			anchorElement.download = fileName;
 			document.body.appendChild(anchorElement);
-			await anchorElement.click(); // Wait for the click to resolve
+			await anchorElement.click(); 
 			document.body.removeChild(anchorElement);
 		} catch (error) {
 			toast.error('Error downloading the video', {
