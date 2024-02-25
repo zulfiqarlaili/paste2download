@@ -20,7 +20,10 @@ const config = {
 		alias: {
 			'@/*': './path/to/lib/*'
 		},
-		version: { name: pkg.version }
+		version: { name: pkg.version },
+		env: {
+			dir: './'
+		}
 	}
 };
 
