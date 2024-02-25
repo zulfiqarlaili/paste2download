@@ -2,10 +2,15 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import { ClipboardPaste } from 'lucide-svelte';
+	import { ClipboardPaste, DownloadIcon } from 'lucide-svelte';
 	import { getVideoInfo } from '$lib/api';
+	import { Separator } from '$lib/components/ui/separator';
 
 	let link: string = '';
+	// let thumbNail: string = '';
+	let thumbNail: string =
+		'https://p19-sign.tiktokcdn-us.com/tos-useast5-p-0068-tx/5c13f0523860440f9e142220ae5a9e79_1701790701~tplv-tiktokx-360p.webp?lk3s=d05b14bd&x-expires=1708963200&x-signature=5FuJ5Bg6Xr4RDo6%2F66h%2FCZ7HqFQ%3D&s=FEED&se=false&sh=&sc=feed_cover&l=202402251651459C7058717E4D4BF142BA';
+	let title: string = '';
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S+/;
@@ -37,11 +42,13 @@
 				position: 'top-right'
 			});
 			console.log(res);
+			thumbNail = res.thumbnail;
+			title = res.title;
 		});
 	};
 </script>
 
-<div class="flex h-screen items-center justify-center">
+<div class="flex h-screen flex-col items-center justify-center">
 	<form class="flex w-full max-w-md items-center space-x-2" on:submit|preventDefault={handleSubmit}>
 		<div class="relative w-full">
 			<Input
@@ -59,6 +66,19 @@
 				<ClipboardPaste class="h-4 w-4" />
 			</Button>
 		</div>
-		<Button disabled={!isValidLink(link)} type="submit">Download</Button>
+		<Button disabled={!isValidLink(link)} type="submit">Get Video</Button>
 	</form>
+	<div>
+		<Separator class="my-8" />
+		{#if thumbNail}
+			<figure class="relative max-w-lg">
+				<img src={thumbNail} alt={title} class="rounded-lg" />
+				<button
+					class="absolute inset-0 flex items-center justify-center rounded-lg bg-black bg-opacity-40 p-2 text-white dark:text-gray-300 sm:opacity-100 lg:opacity-0 lg:hover:opacity-100"
+				>
+					<DownloadIcon class="h-12 w-12" />
+				</button>
+			</figure>
+		{/if}
+	</div>
 </div>
