@@ -3,6 +3,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
 	import { ClipboardPaste } from 'lucide-svelte';
+	import { getVideoInfo } from '$lib/api';
 
 	let link: string = '';
 
@@ -27,10 +28,16 @@
 	};
 
 	const handleSubmit = () => {
-		toast.loading('Downloading...',{
-            description: 'Please wait',
-            position: 'top-right'
-        });
+		toast.loading('Downloading...', {
+			description: 'Please wait',
+			position: 'top-right'
+		});
+		getVideoInfo(link).then((res: any) => {
+			toast.success('Downloaded successfully', {
+				position: 'top-right'
+			});
+			console.log(res);
+		});
 	};
 </script>
 
