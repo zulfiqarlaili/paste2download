@@ -40,7 +40,7 @@
   "type": "module",
   "dependencies": {
     "aos": "^2.3.4",
-    "bits-ui": "^0.18.1",
+    "bits-ui": "^0.18.3",
     "clsx": "^2.1.0",
     "lucide-svelte": "^0.335.0",
     "mode-watcher": "^0.2.1",

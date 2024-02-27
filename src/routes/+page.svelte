@@ -2,6 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Check } from 'lucide-svelte';
+	import * as Accordion from '$lib/components/ui/accordion';
 </script>
 
 <div class="mt-20 flex min-h-screen justify-center">
@@ -39,10 +40,14 @@
 			>
 				How does it work
 			</h2>
-			<p class="mx-auto max-w-[30rem] text-sm text-muted-foreground">
-				Paste a video link to get started; mostly <b>TikTok</b> have watermark in their videos that we
-				want to remove; paste and let the magic happen
-			</p>
+			<p class="mx-auto max-w-[30rem] text-sm text-muted-foreground"></p>
+			<h4 class="mx-auto mb-1 max-w-[30rem] text-muted-foreground">
+				1. Paste the link of the video you want to download
+			</h4>
+			<h4 class="mx-auto mb-1 max-w-[30rem] text-muted-foreground">
+				2. Get the video and download it
+			</h4>
+			<h4 class="mx-auto max-w-[30rem] text-muted-foreground">3. Enjoy!</h4>
 		</div>
 		<Separator class="my-16" />
 		<div class="mx-auto max-w-[30rem]" data-aos="fade-up" data-aos-delay="900">
@@ -76,10 +81,10 @@
 						<!-- <h3 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white"> -->
 						Integration with X (formerly Twitter)
 					</h3>
-					<p class="font-normal text-gray-400 text-base dark:text-gray-500">
+					<p class="text-base font-normal text-gray-400 dark:text-gray-500">
 						<!-- <p class="text-base font-normal text-gray-500 dark:text-gray-400"> -->
-						Instantly share your video link to your X account. We'll download and remove the
-						watermark for you, posting it on your X instantly. No need to download it yourself.
+						Instantly share your video link to your X account. We'll download and remove the watermark
+						for you, posting it on your X instantly. No need to download it yourself.
 					</p>
 				</li>
 				<li class="mb-10 ms-6">
@@ -91,7 +96,7 @@
 						<!-- <h3 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white"> -->
 						Integration with Facebook
 					</h3>
-					<p class="font-normal text-gray-400 text-base dark:text-gray-500">
+					<p class="text-base font-normal text-gray-400 dark:text-gray-500">
 						<!-- <p class="text-base font-normal text-gray-500 dark:text-gray-400"> -->
 						Coming soon
 					</p>
@@ -105,12 +110,48 @@
 						<!-- <h3 class="mb-1 text-lg font-semibold text-gray-900 dark:text-white"> -->
 						Integration with Shopee affiliate
 					</h3>
-					<p class="font-normal text-gray-400 text-base dark:text-gray-500">
+					<p class="text-base font-normal text-gray-400 dark:text-gray-500">
 						<!-- <p class="text-base font-normal text-gray-500 dark:text-gray-400"> -->
 						Coming soon
 					</p>
 				</li>
 			</ol>
+		</div>
+		<Separator class="my-16" />
+		<div data-aos="fade-up" data-aos-delay="200">
+			<h2
+				class="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
+			>
+				FAQ
+			</h2>
+			<!-- <p class="mx-auto max-w-[30rem] text-sm text-muted-foreground">
+				Paste a video link to get started; mostly <b>TikTok</b> have watermark in their videos that we
+				want to remove; paste and let the magic happen
+			</p> -->
+			<Accordion.Root class="mx-auto max-w-[30rem]">
+				<Accordion.Item value="item-1">
+					<Accordion.Trigger>Can I download videos from platforms other than TikTok? </Accordion.Trigger>
+					<Accordion.Content>Yes, Paste2Download supports downloading videos from various platforms. Simply paste the video link, and our tool will handle the rest.</Accordion.Content>
+				</Accordion.Item>
+				<Accordion.Item value="item-2">
+					<Accordion.Trigger>Is Paste2Download free to use?</Accordion.Trigger>
+					<Accordion.Content>
+						Yes, Paste2Download is completely free to use. Enjoy unlimited video downloads without any charges.
+					</Accordion.Content>
+				</Accordion.Item>
+				<Accordion.Item value="item-3">
+					<Accordion.Trigger>Do I need to install any software to use Paste2Download?</Accordion.Trigger>
+					<Accordion.Content>
+						No, Paste2Download is a web-based tool that doesn't require any software installation. You can access it directly from your browser.
+					</Accordion.Content>
+				</Accordion.Item>
+				<Accordion.Item value="item-4">
+					<Accordion.Trigger>Are there any limitations on the number of videos I can download?</Accordion.Trigger>
+					<Accordion.Content>
+						No, there are no limitations on the number of videos you can download. Feel free to download as many videos as you want.
+					</Accordion.Content>
+				</Accordion.Item>
+			</Accordion.Root>
 		</div>
 	</div>
 </div>
