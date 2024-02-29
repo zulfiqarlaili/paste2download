@@ -2,10 +2,11 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import { ClipboardPaste, DownloadIcon } from 'lucide-svelte';
+	import { ClipboardPaste } from 'lucide-svelte';
 	import { getVideoInfo } from '$lib/api';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Skeleton } from '$lib/components/ui/skeleton';
+	import Loader2 from 'lucide-svelte/icons/loader-2';
 
 	let link: string = '';
 	let thumbNail: string = '';
@@ -33,7 +34,7 @@
 	};
 
 	const handleSubmit = () => {
-		toast.loading('Downloading...', {
+		toast.loading('Getting video info...', {
 			description: 'Please wait',
 			position: 'top-right'
 		});
@@ -44,17 +45,14 @@
 
 		getVideoInfo(link)
 			.then((res: any) => {
-				toast.success('Downloaded successfully', {
-					position: 'top-right'
-				});
 				isLoading = false;
 				thumbNail = res.thumbnail;
 				title = res.title;
 				downloadUrl = res.download_url;
 			})
-			.catch(() => {
+			.catch((err) => {
 				isLoading = false;
-				toast.error('Failed to download', {
+				toast.error('Failed: ' + err.message, {
 					position: 'top-right'
 				});
 				isLoading = false;
@@ -64,9 +62,9 @@
 	const handleDownload = async () => {
 		try {
 			const response = await fetch(downloadUrl);
-			if(!response.ok){
-				toast.error(`Error downloading the video ${response.status}`, {position: 'top-right'});
-				return
+			if (!response.ok) {
+				toast.error(`Error downloading the video ${response.status}`, { position: 'top-right' });
+				return;
 			}
 			const contentType = response.headers.get('content-type');
 			const getFileExtension = (contentType: any) => {
@@ -105,7 +103,6 @@
 			});
 		}
 	};
-
 </script>
 
 <div class="flex h-screen flex-col items-center">
@@ -124,7 +121,7 @@
 				class=" p-7 text-lg"
 			/>
 			<Button
-				variant="ghost"
+				variant="secondary"
 				size="icon"
 				class="absolute right-2 top-1/2 -translate-y-1/2 transform "
 				on:click={pasteFromClipboard}
@@ -140,33 +137,39 @@
 	</p>
 	<Button
 		class="mx-auto w-full max-w-md"
-		disabled={!isValidLink(link)}
+		disabled={!isValidLink(link) || isLoading}
 		on:click={handleSubmit}
-		type="submit">Download</Button
+		type="submit"
 	>
+		{#if isLoading}
+			<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+		{:else}
+			<span>Get video</span>
+		{/if}
+	</Button>
 	<div>
 		<Separator class="my-8" />
 		{#if isLoading}
 			<div class="flex items-center">
 				<div class="space-y-2">
-					<Skeleton class="h-[250px] w-[250px]" />
+					<Skeleton class="h-[250px] w-[450px]" />
 					<Skeleton class="h-4 w-[250px]" />
 					<Skeleton class="h-4 w-[200px]" />
 				</div>
 			</div>
 		{/if}
 		{#if thumbNail}
-			<p class="mx-auto mb-6 mt-4 max-w-lg text-center text-lg font-medium">{title}</p>
-			<figure class="relative mx-auto mb-20 max-w-lg">
-				<img src={thumbNail} alt={title} class="mx-auto rounded-lg" />
-				<button
-					class="absolute inset-0 flex items-center justify-center rounded-lg p-2 text-white dark:text-gray-300"
-					on:click={handleDownload}
+			<div data-aos="fade-up">
+				<p class="mx-auto mb-6 mt-4 max-w-md text-center text-lg font-medium">{title}</p>
+				<video
+					class="relative mx-auto mb-6 max-w-md rounded-lg shadow-md"
+					controls
+					src={downloadUrl}><track kind="captions" /></video
 				>
-					<DownloadIcon class="h-12 w-12" />
-				</button>
-			</figure>
-			<a href="{downloadUrl}">download</a>
+				<Button class="mx-auto mb-20 block w-full max-w-md" on:click={handleDownload}>
+					Download
+				</Button>
+			</div>
 		{/if}
 	</div>
 </div>
