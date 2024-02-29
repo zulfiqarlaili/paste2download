@@ -2,6 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Flame, Images, UserX } from 'lucide-svelte';
+	import heroLogo from '$lib/assets/hero.png?enhanced';
 </script>
 
 <div class="mx-auto mt-20 max-w-7xl px-20">
@@ -11,16 +12,13 @@
 		data-aos-delay="100"
 	>
 		<div class="flex-1 text-center sm:mr-2">
-			<img
-				src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/hero/phone-mockup.png"
-				alt="mockup"
-			/>
+			<enhanced:img src={heroLogo} alt="Hero" />
 		</div>
 		<div class="flex-1 text-center sm:ml-2">
 			<h1
 				class="mb-4 max-w-2xl text-4xl font-extrabold leading-none tracking-tight md:text-5xl xl:text-6xl"
 			>
-				Download video and remove
+				Download TikTok videos and remove
 				<span
 					class="bg-gradient-to-r from-green-400 via-green-500 to-green-600 to-teal-500 bg-clip-text text-transparent"
 				>
@@ -30,7 +28,7 @@
 			<p
 				class="mx-auto mb-6 max-w-2xl font-light text-gray-500 dark:text-gray-400 md:text-lg lg:mb-8 lg:text-xl"
 			>
-				Enter the video URL below and get your video with a single click.
+				Enter the TikTok URL below and get your video with a single click.
 			</p>
 			<div class="flex justify-center">
 				<form class="flex w-full max-w-sm items-center space-x-2">
