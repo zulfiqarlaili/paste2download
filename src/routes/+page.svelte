@@ -57,7 +57,7 @@
 		<p
 			class="md:text-md mb-6 max-w-2xl font-light text-gray-500 dark:text-gray-400 lg:mb-8 lg:text-lg"
 		>
-			Our service is fast, free, and secure. Here's what you get:
+			Mostly used to remove watermarks from TikTok and here's what you get:
 		</p>
 	</div>
 
