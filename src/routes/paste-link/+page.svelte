@@ -162,7 +162,7 @@
 			<p
 				class="md:text-md mb-6 max-w-2xl font-light text-gray-500 dark:text-gray-400 lg:mb-8 lg:text-lg"
 			>
-				We support many websites
+				We support many websites ⓘ
 			</p>
 		</Dialog.Trigger>
 		<Dialog.Content class="max-w-[14rem] rounded-lg">
