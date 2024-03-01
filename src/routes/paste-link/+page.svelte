@@ -131,7 +131,7 @@
 </script>
 
 <div class="flex h-screen flex-col items-center p-5">
-	<h1 class="mb-8 mt-[15rem] max-w-md text-center text-4xl font-bold">
+	<h1 class="mb-8 mt-20  max-w-md text-center text-4xl font-bold">
 		Download videos from any website
 	</h1>
 	<form

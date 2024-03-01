@@ -11,6 +11,24 @@
 			data-website-id="23c710f2-072b-4c7b-9304-f2fc6f346fe5"
 			data-domains="paste2download.vercel.app,paste2download.it"
 		></script>
+		<script>
+			window.chatwootSettings = { hideMessageBubble: 'true', type: 'expanded_bubble' };
+			(function (d, t) {
+				var BASE_URL = 'https://chatwoot.07102020.xyz';
+				var g = d.createElement(t),
+					s = d.getElementsByTagName(t)[0];
+				g.src = BASE_URL + '/packs/js/sdk.js';
+				g.defer = true;
+				g.async = true;
+				s.parentNode.insertBefore(g, s);
+				g.onload = function () {
+					window.chatwootSDK.run({
+						websiteToken: 'GjCzGqVeGKDS2w4PA5sPXErJ',
+						baseUrl: BASE_URL
+					});
+				};
+			})(document, 'script');
+		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
 	</head>
