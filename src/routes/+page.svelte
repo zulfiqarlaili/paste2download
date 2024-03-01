@@ -42,6 +42,7 @@
 							class="rounded-lg p-6 text-lg"
 						/>
 						<Button
+							data-umami-event="Landing Hero button"
 							on:click={() => goto('/paste-link')}
 							class="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-lg"
 							>Download</Button
@@ -111,6 +112,6 @@
 		>
 			Enter the video URL and experience our hassle-free download process.
 		</p>
-		<Button href="/paste-link">Get Started</Button>
+		<Button data-umami-event="Landing Get Started button" href="/paste-link">Get Started</Button>
 	</div>
 </div>

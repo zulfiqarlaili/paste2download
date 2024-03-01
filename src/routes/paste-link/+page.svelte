@@ -146,6 +146,7 @@
 				class=" p-7 text-lg"
 			/>
 			<Button
+			data-umami-event="Clipboard paste button"
 				variant="secondary"
 				size="icon"
 				class="absolute right-2 top-1/2 -translate-y-1/2 transform "
@@ -161,6 +162,7 @@
 		We support many websites
 	</p>
 	<Button
+		data-umami-event="Get info button"
 		class="mx-auto w-full max-w-md"
 		disabled={!isValidLink(link) || isLoading}
 		on:click={handleSubmit}
@@ -187,7 +189,9 @@
 			<video class="mb-6 rounded-lg shadow-md" controls src={downloadUrl}
 				><track kind="captions" /></video
 			>
-			<Button class="mx-auto mb-20 block w-full max-w-md" on:click={handleDownload}>
+			<Button
+			data-umami-event="Download button" 
+			class="mx-auto mb-20 block w-full max-w-md" on:click={handleDownload}>
 				Download
 			</Button>
 		</div>
