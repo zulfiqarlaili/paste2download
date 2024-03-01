@@ -123,6 +123,9 @@
 		if ($urlHero) {
 			link = $urlHero;
 			handleLinkValidation();
+			if(isValidLink(link)) {
+				handleSubmit();
+			}
 		}
 	});
 </script>
@@ -169,29 +172,24 @@
 			<span>Get video</span>
 		{/if}
 	</Button>
-	<div>
+	{#if isLoading}
+		<div class="w-full max-w-md space-y-2 px-5 pb-6">
+			<Separator class="my-8" />
+			<Skeleton class="h-[250px] " />
+			<Skeleton class="h-4 w-[250px]" />
+			<Skeleton class="h-4 w-[200px]" />
+		</div>
+	{/if}
+	{#if thumbNail}
 		<Separator class="my-8" />
-		{#if isLoading}
-			<div class="flex items-center">
-				<div class="space-y-2">
-					<Skeleton class="h-[250px] w-[450px]" />
-					<Skeleton class="h-4 w-[250px]" />
-					<Skeleton class="h-4 w-[200px]" />
-				</div>
-			</div>
-		{/if}
-		{#if thumbNail}
-			<div data-aos="fade-up">
-				<p class="mx-auto mb-6 mt-4 max-w-md text-center text-lg font-medium">{title}</p>
-				<video
-					class="relative mx-auto mb-6 max-w-md rounded-lg shadow-md"
-					controls
-					src={downloadUrl}><track kind="captions" /></video
-				>
-				<Button class="mx-auto mb-20 block w-full max-w-md" on:click={handleDownload}>
-					Download
-				</Button>
-			</div>
-		{/if}
-	</div>
+		<div data-aos="fade-up" class="mx-auto max-w-md px-5">
+			<p class="mx-auto mb-6 mt-4 max-w-md text-center text-lg font-medium">{title}</p>
+			<video class="mb-6 rounded-lg shadow-md" controls src={downloadUrl}
+				><track kind="captions" /></video
+			>
+			<Button class="mx-auto mb-20 block w-full max-w-md" on:click={handleDownload}>
+				Download
+			</Button>
+		</div>
+	{/if}
 </div>
