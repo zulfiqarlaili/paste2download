@@ -9,6 +9,7 @@
 	import Loader2 from 'lucide-svelte/icons/loader-2';
 	import { onMount } from 'svelte';
 	import { urlHero } from '$lib/store';
+	import * as Dialog from '$lib/components/ui/dialog';
 
 	let link: string = '';
 	let thumbNail: string = '';
@@ -123,7 +124,7 @@
 		if ($urlHero) {
 			link = $urlHero;
 			handleLinkValidation();
-			if(isValidLink(link)) {
+			if (isValidLink(link)) {
 				handleSubmit();
 			}
 		}
@@ -131,7 +132,7 @@
 </script>
 
 <div class="flex h-screen flex-col items-center p-5">
-	<h1 class="mb-8 mt-20  max-w-md text-center text-4xl font-bold">
+	<h1 class="mb-8 mt-20 max-w-md text-center text-4xl font-bold">
 		Download videos from any website
 	</h1>
 	<form
@@ -146,7 +147,7 @@
 				class=" p-7 text-lg"
 			/>
 			<Button
-			data-umami-event="Clipboard paste button"
+				data-umami-event="Clipboard paste button"
 				variant="secondary"
 				size="icon"
 				class="absolute right-2 top-1/2 -translate-y-1/2 transform "
@@ -156,11 +157,29 @@
 			</Button>
 		</div>
 	</form>
-	<p
-		class="md:text-md mb-6 max-w-2xl font-light text-gray-500 dark:text-gray-400 lg:mb-8 lg:text-lg"
-	>
-		We support many websites
-	</p>
+	<Dialog.Root>
+		<Dialog.Trigger>
+			<p
+				class="md:text-md mb-6 max-w-2xl font-light text-gray-500 dark:text-gray-400 lg:mb-8 lg:text-lg"
+			>
+				We support many websites
+			</p>
+		</Dialog.Trigger>
+		<Dialog.Content class="max-w-[14rem] rounded-lg">
+			<Dialog.Header>
+				<Dialog.Title class="text-center">Supported sites</Dialog.Title>
+				<Dialog.Description class="text-center">
+					<p>Facebook Reels</p>
+					<p>Instagram Reels</p>
+					<p>YouTube shorts</p>
+					<p>Vimeo</p>
+					<p>TikTok</p>
+					<p>Twitter</p>
+					<p>Reddit</p>
+				</Dialog.Description>
+			</Dialog.Header>
+		</Dialog.Content>
+	</Dialog.Root>
 	<Button
 		data-umami-event="Get info button"
 		class="mx-auto w-full max-w-md"
@@ -190,8 +209,10 @@
 				><track kind="captions" /></video
 			>
 			<Button
-			data-umami-event="Download button" 
-			class="mx-auto mb-20 block w-full max-w-md" on:click={handleDownload}>
+				data-umami-event="Download button"
+				class="mx-auto mb-20 block w-full max-w-md"
+				on:click={handleDownload}
+			>
 				Download
 			</Button>
 		</div>
