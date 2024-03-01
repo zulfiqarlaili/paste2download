@@ -7,6 +7,8 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import Loader2 from 'lucide-svelte/icons/loader-2';
+	import { onMount } from 'svelte';
+	import {urlHero} from '$lib/store'
 
 	let link: string = '';
 	let thumbNail: string = '';
@@ -103,6 +105,13 @@
 			});
 		}
 	};
+
+	onMount(() => {
+		if ($urlHero) {
+			link = $urlHero;
+			// handleLinkValidation();
+		}
+	});
 </script>
 
 <div class="flex h-screen flex-col items-center">

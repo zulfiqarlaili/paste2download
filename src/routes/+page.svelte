@@ -3,6 +3,8 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Flame, Images, UserX } from 'lucide-svelte';
 	import heroLogo from '$lib/assets/hero.png?enhanced';
+	import { urlHero } from '$lib/store';
+	import { goto } from '$app/navigation';
 </script>
 
 <div class="mx-auto mt-20 max-w-7xl px-20">
@@ -34,11 +36,14 @@
 				<form class="flex w-full max-w-sm items-center space-x-2">
 					<div class="relative w-full rounded-lg">
 						<Input
+							bind:value={$urlHero}
 							type="text"
 							placeholder="Enter video URL here..."
 							class="rounded-lg p-6 text-lg"
 						/>
-						<Button class="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-lg"
+						<Button
+							on:click={() => goto('/paste-link')}
+							class="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-lg"
 							>Download</Button
 						>
 					</div>
