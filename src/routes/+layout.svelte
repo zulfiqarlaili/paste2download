@@ -13,6 +13,10 @@
 	import { Home, MessageCircle } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 
+	const handleSupport = () => {
+		(window as any).$chatwoot.toggle('open');
+	};
+
 	onMount(() => {
 		AOS.init();
 	});
@@ -24,7 +28,7 @@
 			<Home />
 		</Button>
 		<div class="flex items-center rtl:space-x-reverse">
-			<Button on:click={() => goto('/')} variant="ghost" size="icon">
+			<Button on:click={handleSupport} variant="ghost" size="icon">
 				<MessageCircle class="h-6 w-6" />
 			</Button>
 			<div>
