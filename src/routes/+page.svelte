@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { Flame, Images, UserX } from 'lucide-svelte';
+	import { Flame, Hammer, Images, Lightbulb, UserX } from 'lucide-svelte';
 	import heroLogo from '$lib/assets/hero.png?enhanced';
 	import { urlHero } from '$lib/store';
 	import { goto } from '$app/navigation';
+	import { Separator } from '$lib/components/ui/separator';
 </script>
 
 <div class="mx-auto mt-20 max-w-7xl px-5">
@@ -114,4 +115,82 @@
 		</p>
 		<Button data-umami-event="Landing Get Started button" href="/paste-link">Get Started</Button>
 	</div>
+	<Separator />
+</div>
+<div class="mx-auto mt-16 flex max-w-md flex-col items-center justify-center px-12" data-aos="fade-up" data-aos-delay="300">
+	<h1
+		class="mb-8 max-w-2xl text-2xl font-extrabold leading-none tracking-tight md:text-4xl xl:text-4xl"
+	>
+		Product Roadmap
+	</h1>
+
+	<ol class="0 relative mb-10 border-s border-gray-200 dark:border-gray-700">
+		<li class="mb-10 ms-6">
+			<span
+				class="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-green-200 ring-4 ring-white dark:bg-green-900 dark:ring-gray-900"
+			>
+				<svg
+					class="h-3.5 w-3.5 text-green-500 dark:text-green-400"
+					aria-hidden="true"
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 16 12"
+				>
+					<path
+						stroke="currentColor"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M1 5.917 5.724 10.5 15 1.5"
+					/>
+				</svg>
+			</span>
+			<h3 class="font-medium leading-tight">Remove watermarks</h3>
+			<p class="text-sm text-muted-foreground">
+				Remove watermarks from your videos from popular sites mainly TikTok
+			</p>
+		</li>
+		<li class="mb-10 ms-6">
+			<span
+				class="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-4 ring-white dark:bg-gray-700 dark:ring-gray-900"
+			>
+				<Hammer class="h-4 w-4 text-gray-500 dark:text-gray-400" />
+			</span>
+			<h3 class="font-medium leading-tight">Seamless Social Media Integration</h3>
+			<p class="text-sm text-muted-foreground">
+				Post videos directly without downloading. We handle the removal of watermarks.
+			</p>
+		</li>
+		<li class="mb-10 ms-6">
+			<span
+				class="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-4 ring-white dark:bg-gray-700 dark:ring-gray-900"
+			>
+				<Lightbulb class="h-4 w-4 text-gray-500 dark:text-gray-400" />
+			</span>
+			<h3 class="font-medium leading-tight text-muted-foreground">AI-Powered Capabilities</h3>
+			<p class="text-sm text-muted-foreground">Help generate captions based on video content.</p>
+		</li>
+		<li class="mb-10 ms-6">
+			<span
+				class="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-4 ring-white dark:bg-gray-700 dark:ring-gray-900"
+			>
+				<Lightbulb class="h-4 w-4 text-gray-500 dark:text-gray-400" />
+			</span>
+			<h3 class="font-medium leading-tight text-muted-foreground">
+				Integration with Shopee Affiliate
+			</h3>
+			<p class="text-sm text-muted-foreground">
+				Grab affiliate links and post along with the video to social media. Discover popular
+				products to promote.
+			</p>
+		</li>
+		<li class="mb-10 ms-6">
+			<span
+				class="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-4 ring-white dark:bg-gray-700 dark:ring-gray-900"
+			>
+			</span>
+			<h3 class="font-medium leading-tight text-muted-foreground">More</h3>
+			<p class="text-sm text-muted-foreground">More features to come.</p>
+		</li>
+	</ol>
 </div>

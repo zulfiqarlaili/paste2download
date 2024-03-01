@@ -22,14 +22,14 @@
 	});
 </script>
 
-<nav class="border-gray-200">
-	<div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4">
+<nav >
+	<div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between px-4 pt-1">
 		<Button on:click={() => goto('/')} variant="ghost" size="icon">
-			<Home />
+			<Home class="h-5 w-5" />
 		</Button>
 		<div class="flex items-center rtl:space-x-reverse">
 			<Button on:click={handleSupport} variant="ghost" size="icon">
-				<MessageCircle class="h-6 w-6" />
+				<MessageCircle class="h-5 w-5" />
 			</Button>
 			<div>
 				<Button
