@@ -8,7 +8,7 @@
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import Loader2 from 'lucide-svelte/icons/loader-2';
 	import { onMount } from 'svelte';
-	import {urlHero} from '$lib/store'
+	import { urlHero } from '$lib/store';
 
 	let link: string = '';
 	let thumbNail: string = '';
@@ -22,9 +22,22 @@
 	};
 
 	const pasteFromClipboard = async () => {
-		const clipText = await navigator.clipboard.readText();
-		link = clipText;
-		handleLinkValidation();
+		try {
+			const text = await navigator.clipboard.readText();
+			link = text;
+			handleLinkValidation();
+		} catch (err: any) {
+			if (err.name === 'NotAllowedError') {
+				toast.error('Clipboard access denied', {
+					description: 'Please allow clipboard access and try again',
+					position: 'top-right'
+				});
+			} else {
+				toast.error('Failed: ' + err.message, {
+					position: 'top-right'
+				});
+			}
+		}
 	};
 	const handleLinkValidation = () => {
 		if (!isValidLink(link)) {
@@ -109,12 +122,12 @@
 	onMount(() => {
 		if ($urlHero) {
 			link = $urlHero;
-			// handleLinkValidation();
+			handleLinkValidation();
 		}
 	});
 </script>
 
-<div class="flex h-screen flex-col items-center">
+<div class="flex h-screen flex-col items-center p-5">
 	<h1 class="mb-8 mt-[15rem] max-w-md text-center text-4xl font-bold">
 		Download videos from any website
 	</h1>

@@ -7,7 +7,7 @@
 	import { goto } from '$app/navigation';
 </script>
 
-<div class="mx-auto mt-20 max-w-7xl px-20">
+<div class="mx-auto mt-20 max-w-7xl px-5">
 	<section
 		class="flex flex-col items-center justify-center gap-4 sm:flex-row"
 		data-aos="fade-up"
