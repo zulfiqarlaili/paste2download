@@ -9,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import { version } from '$app/environment';
 	import { Toaster } from "$lib/components/ui/sonner";
+	import { page } from '$app/stores';
 
 	onMount(() => {
 		AOS.init();
@@ -29,4 +30,6 @@
 <ModeWatcher />
 <Toaster />
 <slot />
-<small class="text-sm text-muted-foreground">v{version}</small>
+{#if $page.url.pathname === '/'}
+    <small class="text-sm text-muted-foreground">v{version}</small>
+{/if}

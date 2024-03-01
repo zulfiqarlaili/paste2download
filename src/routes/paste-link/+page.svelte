@@ -2,14 +2,19 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import { ClipboardPaste, DownloadIcon } from 'lucide-svelte';
+	import { ClipboardPaste } from 'lucide-svelte';
 	import { getVideoInfo } from '$lib/api';
 	import { Separator } from '$lib/components/ui/separator';
+	import { Skeleton } from '$lib/components/ui/skeleton';
+	import Loader2 from 'lucide-svelte/icons/loader-2';
+	import { onMount } from 'svelte';
+	import {urlHero} from '$lib/store'
 
 	let link: string = '';
 	let thumbNail: string = '';
 	let title: string = '';
 	let downloadUrl: string = '';
+	let isLoading: boolean = false;
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S+/;
@@ -21,7 +26,6 @@
 		link = clipText;
 		handleLinkValidation();
 	};
-
 	const handleLinkValidation = () => {
 		if (!isValidLink(link)) {
 			toast.error('Invalid link', {
@@ -32,24 +36,38 @@
 	};
 
 	const handleSubmit = () => {
-		toast.loading('Downloading...', {
+		toast.loading('Getting video info...', {
 			description: 'Please wait',
 			position: 'top-right'
 		});
-		getVideoInfo(link).then((res: any) => {
-			toast.success('Downloaded successfully', {
-				position: 'top-right'
+		isLoading = true;
+		thumbNail = '';
+		title = '';
+		downloadUrl = '';
+
+		getVideoInfo(link)
+			.then((res: any) => {
+				isLoading = false;
+				thumbNail = res.thumbnail;
+				title = res.title;
+				downloadUrl = res.download_url;
+			})
+			.catch((err) => {
+				isLoading = false;
+				toast.error('Failed: ' + err.message, {
+					position: 'top-right'
+				});
+				isLoading = false;
 			});
-			console.log(res);
-			thumbNail = res.thumbnail;
-			title = res.title;
-			downloadUrl = res.download_url;
-		});
 	};
 
 	const handleDownload = async () => {
 		try {
 			const response = await fetch(downloadUrl);
+			if (!response.ok) {
+				toast.error(`Error downloading the video ${response.status}`, { position: 'top-right' });
+				return;
+			}
 			const contentType = response.headers.get('content-type');
 			const getFileExtension = (contentType: any) => {
 				const videoFormats = {
@@ -60,7 +78,8 @@
 					'video/quicktime': '.mov',
 					'video/x-msvideo': '.avi',
 					'video/x-ms-wmv': '.wmv',
-					'video/mpeg': '.mpeg'
+					'video/mpeg': '.mpeg',
+					'application/x-mpegURL': '.m3u8'
 				};
 
 				for (const [key, value] of Object.entries(videoFormats)) {
@@ -72,16 +91,13 @@
 				return '.mp4'; // Default to .mp4 if content type is unknown
 			};
 			const fileExtension = getFileExtension(contentType);
-			const fileName = `${title
-				.replaceAll(' ', '_')
-				.replace(/[^\x00-\x7F]/g, '')
-				.replace(/#[a-z0-9_]+/gi, '')}${fileExtension}`;
+			const fileName = `${title}${fileExtension}`;
 			const blob = await response.blob();
 			const anchorElement = document.createElement('a');
 			anchorElement.href = window.URL.createObjectURL(blob);
 			anchorElement.download = fileName;
 			document.body.appendChild(anchorElement);
-			await anchorElement.click(); 
+			await anchorElement.click();
 			document.body.removeChild(anchorElement);
 		} catch (error) {
 			toast.error('Error downloading the video', {
@@ -89,40 +105,80 @@
 			});
 		}
 	};
+
+	onMount(() => {
+		if ($urlHero) {
+			link = $urlHero;
+			// handleLinkValidation();
+		}
+	});
 </script>
 
-<div class="flex h-screen flex-col items-center justify-center">
-	<form class="flex w-full max-w-md items-center space-x-2" on:submit|preventDefault={handleSubmit}>
+<div class="flex h-screen flex-col items-center">
+	<h1 class="mb-8 mt-[15rem] max-w-md text-center text-4xl font-bold">
+		Download videos from any website
+	</h1>
+	<form
+		class="mb-8 flex w-full max-w-md items-center space-x-2"
+		on:submit|preventDefault={handleSubmit}
+	>
 		<div class="relative w-full">
 			<Input
 				bind:value={link}
 				type="text"
 				placeholder="Enter video URL here..."
-				class="p-4 pr-10 text-lg"
+				class=" p-7 text-lg"
 			/>
 			<Button
-				variant="ghost"
+				variant="secondary"
 				size="icon"
-				class="absolute right-0 top-0 "
+				class="absolute right-2 top-1/2 -translate-y-1/2 transform "
 				on:click={pasteFromClipboard}
 			>
-				<ClipboardPaste class="h-4 w-4" />
+				<ClipboardPaste class="h-6 w-6 text-muted-foreground" />
 			</Button>
 		</div>
-		<Button disabled={!isValidLink(link)} type="submit">Get Video</Button>
 	</form>
+	<p
+		class="md:text-md mb-6 max-w-2xl font-light text-gray-500 dark:text-gray-400 lg:mb-8 lg:text-lg"
+	>
+		We support many websites
+	</p>
+	<Button
+		class="mx-auto w-full max-w-md"
+		disabled={!isValidLink(link) || isLoading}
+		on:click={handleSubmit}
+		type="submit"
+	>
+		{#if isLoading}
+			<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+		{:else}
+			<span>Get video</span>
+		{/if}
+	</Button>
 	<div>
 		<Separator class="my-8" />
+		{#if isLoading}
+			<div class="flex items-center">
+				<div class="space-y-2">
+					<Skeleton class="h-[250px] w-[450px]" />
+					<Skeleton class="h-4 w-[250px]" />
+					<Skeleton class="h-4 w-[200px]" />
+				</div>
+			</div>
+		{/if}
 		{#if thumbNail}
-			<figure class="relative max-w-lg">
-				<img src={thumbNail} alt={title} class="rounded-lg" />
-				<button
-					class="absolute inset-0 flex items-center justify-center rounded-lg bg-black bg-opacity-40 p-2 text-white dark:text-gray-300 sm:opacity-100 lg:opacity-0 lg:hover:opacity-100"
-					on:click={handleDownload}
+			<div data-aos="fade-up">
+				<p class="mx-auto mb-6 mt-4 max-w-md text-center text-lg font-medium">{title}</p>
+				<video
+					class="relative mx-auto mb-6 max-w-md rounded-lg shadow-md"
+					controls
+					src={downloadUrl}><track kind="captions" /></video
 				>
-					<DownloadIcon class="h-12 w-12" />
-				</button>
-			</figure>
+				<Button class="mx-auto mb-20 block w-full max-w-md" on:click={handleDownload}>
+					Download
+				</Button>
+			</div>
 		{/if}
 	</div>
 </div>
