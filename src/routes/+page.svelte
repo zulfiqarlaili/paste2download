@@ -6,6 +6,16 @@
 	import { urlHero } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { Separator } from '$lib/components/ui/separator';
+	import { signIn, saveSignInMetaData } from '$lib/pb';
+
+	const handleSubmit = async () => {
+		signIn().then(async (response) => {
+			if (response.meta) {
+				const data = await saveSignInMetaData(response);
+				console.log(data);
+			}
+		});
+	};
 </script>
 
 <div class="mx-auto mt-20 max-w-7xl px-5">
@@ -102,7 +112,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="my-20 text-center" data-aos="zoom-in" data-aos-delay="300">
+	<div class="my-20 text-center" data-aos="fade-up" data-aos-delay="300">
 		<h1
 			class="mx-auto mb-4 max-w-2xl text-4xl font-extrabold leading-none tracking-tight md:text-5xl xl:text-6xl"
 		>
@@ -113,11 +123,18 @@
 		>
 			Enter the video URL and experience our hassle-free download process.
 		</p>
-		<Button data-umami-event="Landing Get Started button" href="/paste-link">Get Started</Button>
+		<!-- <Button data-umami-event="Landing Get Started button" href="/paste-link">Get Started</Button> -->
+		<Button data-umami-event="Landing Get Started button" on:click={handleSubmit}
+			>Get Started</Button
+		>
 	</div>
 	<Separator />
 </div>
-<div class="mx-auto mt-16 flex max-w-md flex-col items-center justify-center px-12" data-aos="fade-up" data-aos-delay="300">
+<div
+	class="mx-auto mt-16 flex max-w-md flex-col items-center justify-center px-12"
+	data-aos="fade-up"
+	data-aos-delay="300"
+>
 	<h1
 		class="mb-8 max-w-2xl text-2xl font-extrabold leading-none tracking-tight md:text-4xl xl:text-4xl"
 	>
