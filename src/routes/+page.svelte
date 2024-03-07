@@ -6,14 +6,16 @@
 	import { urlHero } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { Separator } from '$lib/components/ui/separator';
-	import { signIn, saveSignInMetaData } from '$lib/pb';
+	import { signInAndSaveMetaData } from '$lib/pb';
+	import { toast } from 'svelte-sonner';
 
 	const handleSubmit = async () => {
-		signIn().then(async (response) => {
-			if (response.meta) {
-				const data = await saveSignInMetaData(response);
-				console.log(data);
-			}
+		signInAndSaveMetaData().then(async (response) => {
+			console.log(response);
+		}).catch((error) => {
+			toast.error('Failed: ' + error.message, {
+				position: 'top-right'
+			})
 		});
 	};
 </script>

@@ -12,6 +12,14 @@
 	import { page } from '$app/stores';
 	import { Home, MessageCircle } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
+	import * as Avatar from '$lib/components/ui/avatar';
+	import { getUser, signOut } from '$lib/pb';
+	import type { AuthModel } from 'pocketbase';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { Item } from '$lib/components/ui/accordion';
+
+	let avatar = '';
+	let user: AuthModel;
 
 	const handleSupport = () => {
 		(window as any).$chatwoot.toggle('open');
@@ -19,10 +27,14 @@
 
 	onMount(() => {
 		AOS.init();
+		user = getUser();
+		if (user) {
+			avatar = user.metaData.avatarUrl;
+		}
 	});
 </script>
 
-<nav >
+<nav>
 	<div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between px-4 pt-1">
 		<Button on:click={() => goto('/')} variant="ghost" size="icon">
 			<Home class="h-5 w-5" />
@@ -46,6 +58,23 @@
 					/>
 				</Button>
 			</div>
+			{#if user}
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger asChild let:builder>
+						<Button variant="ghost" builders={[builder]}>
+							<Avatar.Root class="relative h-[1.5rem] w-[1.5rem]">
+								<Avatar.Image src={avatar} alt="@shadcn" />
+								<Avatar.Fallback>CN</Avatar.Fallback>
+							</Avatar.Root>
+						</Button>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content>
+						<DropdownMenu.Label>Appearance</DropdownMenu.Label>
+						<DropdownMenu.Separator />
+						<DropdownMenu.Item on:click={signOut}>Logout</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			{/if}
 		</div>
 	</div>
 </nav>
