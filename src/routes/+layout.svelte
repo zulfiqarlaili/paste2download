@@ -25,13 +25,15 @@
 
 	onMount(() => {
 		AOS.init();
-		pb.authStore.onChange((auth) => {
-			if (!auth) {
+		pb.authStore.onChange(() => {
+			const data = getUser();
+			if (!data) {
 				user = null;
 			} else {
-				user = getUser();
+				user = data;
 			}
 		});
+		user = getUser() || null;
 	});
 </script>
 
@@ -70,7 +72,7 @@
 						</Button>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
-						<DropdownMenu.Label>Appearance</DropdownMenu.Label>
+						<DropdownMenu.Label>{user.metaData.name}</DropdownMenu.Label>
 						<DropdownMenu.Separator />
 						<DropdownMenu.Item on:click={signOut}>Logout</DropdownMenu.Item>
 					</DropdownMenu.Content>

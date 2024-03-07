@@ -10,12 +10,10 @@
 	import { toast } from 'svelte-sonner';
 
 	const handleSubmit = async () => {
-		signInAndSaveMetaData().then(async (response) => {
-			console.log(response);
-		}).catch((error) => {
+		signInAndSaveMetaData().catch((error) => {
 			toast.error('Failed: ' + error.message, {
 				position: 'top-right'
-			})
+			});
 		});
 	};
 </script>
