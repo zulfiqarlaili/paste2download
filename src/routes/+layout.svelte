@@ -16,11 +16,23 @@
 	import { getUser, pb, signOut } from '$lib/pb';
 	import type { AuthModel } from 'pocketbase';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { toast } from 'svelte-sonner';
 
 	let user: AuthModel;
 
 	const handleSupport = () => {
 		(window as any).$chatwoot.toggle('open');
+	};
+
+	const handleLogout = () => {
+		toast.message('You sure want to log out?', {
+			position: 'top-center',
+			duration: 3000,
+			action: {
+				label: 'Yes',
+				onClick: () => signOut()
+			},
+		});
 	};
 
 	onMount(() => {
@@ -74,7 +86,9 @@
 					<DropdownMenu.Content>
 						<DropdownMenu.Label>{user.metaData.name}</DropdownMenu.Label>
 						<DropdownMenu.Separator />
-						<DropdownMenu.Item on:click={signOut}>Logout</DropdownMenu.Item>
+						<DropdownMenu.Item on:click={handleLogout}>
+							<span>Logout</span>
+						</DropdownMenu.Item>
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
 			{/if}
