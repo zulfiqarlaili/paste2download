@@ -13,12 +13,10 @@
 	import { Home, MessageCircle } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import * as Avatar from '$lib/components/ui/avatar';
-	import { getUser, signOut } from '$lib/pb';
+	import { getUser, pb, signOut } from '$lib/pb';
 	import type { AuthModel } from 'pocketbase';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { Item } from '$lib/components/ui/accordion';
 
-	let avatar = '';
 	let user: AuthModel;
 
 	const handleSupport = () => {
@@ -27,10 +25,13 @@
 
 	onMount(() => {
 		AOS.init();
-		user = getUser();
-		if (user) {
-			avatar = user.metaData.avatarUrl;
-		}
+		pb.authStore.onChange((auth) => {
+			if (!auth) {
+				user = null;
+			} else {
+				user = getUser();
+			}
+		});
 	});
 </script>
 
@@ -63,7 +64,7 @@
 					<DropdownMenu.Trigger asChild let:builder>
 						<Button variant="ghost" builders={[builder]}>
 							<Avatar.Root class="relative h-[1.5rem] w-[1.5rem]">
-								<Avatar.Image src={avatar} alt="@shadcn" />
+								<Avatar.Image src={user.metaData.avatarUrl} alt="@shadcn" />
 								<Avatar.Fallback>CN</Avatar.Fallback>
 							</Avatar.Root>
 						</Button>

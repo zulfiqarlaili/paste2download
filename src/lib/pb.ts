@@ -1,4 +1,4 @@
-import PocketBase, { type RecordAuthResponse } from 'pocketbase';
+import PocketBase, { type AuthModel, type RecordAuthResponse } from 'pocketbase';
 
 export const pb = new PocketBase('http://192.168.1.29:3002');
 
@@ -17,8 +17,7 @@ export const signInAndSaveMetaData = async (): Promise<RecordAuthResponse | unkn
 	}
 };
 
-export const getUser = () => pb.authStore.model;
-
+export const getUser = (): Readonly<AuthModel> => pb.authStore.model;
 
 export const signOut = () => pb.authStore.clear();
 
