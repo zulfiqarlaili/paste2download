@@ -30,8 +30,13 @@
 			duration: 3000,
 			action: {
 				label: 'Yes',
-				onClick: () => signOut()
-			},
+				onClick: () => {
+					signOut();
+					toast.success('Logged out!',{
+						position: 'top-center',
+					});
+				}
+			}
 		});
 	};
 

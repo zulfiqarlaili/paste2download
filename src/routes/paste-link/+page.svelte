@@ -64,7 +64,7 @@
 				isLoading = false;
 				thumbNail = res.thumbnail;
 				title = res.title;
-				downloadUrl = res.download_url;
+				downloadUrl = res.download_url;	
 			})
 			.catch((err) => {
 				isLoading = false;
