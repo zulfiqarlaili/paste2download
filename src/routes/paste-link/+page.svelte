@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import { ClipboardPaste } from 'lucide-svelte';
+	import { ClipboardPaste, TwitterIcon } from 'lucide-svelte';
 	import { getVideoInfo } from '$lib/api';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Skeleton } from '$lib/components/ui/skeleton';
@@ -10,12 +10,14 @@
 	import { onMount } from 'svelte';
 	import { urlHero } from '$lib/store';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import { isLoggedIn, pb, signInAndSaveMetaData } from '$lib/pb';
 
 	let link: string = '';
 	let thumbNail: string = '';
 	let title: string = '';
 	let downloadUrl: string = '';
 	let isLoading: boolean = false;
+	let isLogin: boolean = false;
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S+/;
@@ -40,6 +42,7 @@
 			}
 		}
 	};
+
 	const handleLinkValidation = () => {
 		if (!isValidLink(link)) {
 			toast.error('Invalid link', {
@@ -64,10 +67,12 @@
 				isLoading = false;
 				thumbNail = res.thumbnail;
 				title = res.title;
-				downloadUrl = res.download_url;	
+				downloadUrl = res.download_url;
+				console.log(res);
 			})
 			.catch((err) => {
 				isLoading = false;
+				console.log(err);
 				toast.error('Failed: ' + err.message, {
 					position: 'top-right'
 				});
@@ -120,6 +125,14 @@
 		}
 	};
 
+	const handleSocialLogin = async () => {
+		signInAndSaveMetaData().catch((error) => {
+			toast.error('Failed: ' + error.message, {
+				position: 'top-right'
+			});
+		});
+	};
+
 	onMount(() => {
 		if ($urlHero) {
 			link = $urlHero;
@@ -128,6 +141,11 @@
 				handleSubmit();
 			}
 		}
+		pb.authStore.onChange(() => {
+			isLogin = isLoggedIn() || false;
+		});
+
+		isLogin = isLoggedIn();
 	});
 </script>
 
@@ -203,18 +221,49 @@
 	{/if}
 	{#if thumbNail}
 		<Separator class="my-8" />
-		<div data-aos="fade-up" class="mx-auto max-w-md px-5">
-			<p class="mx-auto mb-6 mt-4 max-w-md text-center text-lg font-medium">{title}</p>
+		<div class="mx-auto max-w-md px-5">
+			<p class="mx-auto mb-6 mt-4 max-w-md text-center text-2xl font-medium">{title}</p>
 			<video class="mb-6 rounded-lg shadow-md" controls src={downloadUrl}
 				><track kind="captions" /></video
 			>
 			<Button
 				data-umami-event="Download button"
-				class="mx-auto mb-20 block w-full max-w-md"
+				class="mx-auto mb-4 block w-full max-w-md"
 				on:click={handleDownload}
 			>
-				Download
+				Download video
 			</Button>
+			{#if isLogin}
+				<Button
+					data-umami-event="Social post button"
+					variant="secondary"
+					class="mx-auto mb-4 block w-full max-w-md"
+				>
+					Post to X
+				</Button>
+			{:else}
+				<Dialog.Root>
+					<Dialog.Trigger class="mx-auto mb-20 block w-full max-w-md">
+						<Button
+							data-umami-event="Social login button"
+							variant="secondary"
+							class="w-full max-w-md"
+						>
+							Login to Share
+						</Button>
+					</Dialog.Trigger>
+					<Dialog.Content class="max-w-xs rounded-2xl text-center">
+						<Dialog.Header>
+							<Dialog.Title>Login with to share</Dialog.Title>
+							<Dialog.Description>
+								<div class="mx-auto mt-4 flex max-w-[10rem] flex-col justify-center space-y-2">
+									<Button variant="outline" on:click={handleSocialLogin}>X (Twitter)</Button>
+								</div>
+							</Dialog.Description>
+						</Dialog.Header>
+					</Dialog.Content>
+				</Dialog.Root>
+			{/if}
 		</div>
 	{/if}
 </div>

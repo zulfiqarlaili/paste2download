@@ -15,7 +15,8 @@ export const getVideoInfo = async (videoUrl: string) => {
 	});
 
 	if (!response.ok) {
-		throw new Error(`HTTP error! Status: ${response.status}`);
+		const errorMsg = `Failed to fetch video info. Status: ${response.status}.`;
+		throw new Error(errorMsg);
 	}
 
 	return response.json();

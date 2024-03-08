@@ -21,4 +21,8 @@ export const getUser = (): Readonly<AuthModel> => pb.authStore.model;
 
 export const signOut = () => pb.authStore.clear();
 
+export const isLoggedIn = () => pb.authStore.isValid;
+
+export const listAuthMethods = () => pb.collection('users').listAuthMethods();
+
 

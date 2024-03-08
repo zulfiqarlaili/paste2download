@@ -13,7 +13,7 @@
 	import { Home, MessageCircle } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import * as Avatar from '$lib/components/ui/avatar';
-	import { getUser, pb, signOut } from '$lib/pb';
+	import { getUser, isLoggedIn, pb, signOut } from '$lib/pb';
 	import type { AuthModel } from 'pocketbase';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { toast } from 'svelte-sonner';
@@ -43,14 +43,11 @@
 	onMount(() => {
 		AOS.init();
 		pb.authStore.onChange(() => {
-			const data = getUser();
-			if (!data) {
-				user = null;
-			} else {
-				user = data;
-			}
+			user = getUser() || null;
 		});
 		user = getUser() || null;
+		
+		if(isLoggedIn()) goto('/paste-link');
 	});
 </script>
 
