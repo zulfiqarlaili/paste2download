@@ -133,6 +133,10 @@
 		});
 	};
 
+	const handlePostSocialMedia = async () => {
+		console.log(getUser())
+	};
+
 	onMount(() => {
 		if ($urlHero) {
 			link = $urlHero;
@@ -238,6 +242,7 @@
 					data-umami-event="Social post button"
 					variant="secondary"
 					class="mx-auto mb-4 block w-full max-w-md"
+					on:click = {handlePostSocialMedia}
 				>
 					Post to X
 				</Button>
