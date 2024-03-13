@@ -13,12 +13,14 @@
 	import { Home, MessageCircle } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import * as Avatar from '$lib/components/ui/avatar';
-	import { getUser, isLoggedIn, pb, signOut } from '$lib/pb';
-	import type { AuthModel } from 'pocketbase';
+	import { isLoggedIn, pb, signOut } from '$lib/pb';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { toast } from 'svelte-sonner';
+	import { app, getUser, logout } from '$lib/firebase';
+	import type { User } from 'firebase/auth';
 
-	let user: AuthModel;
+	let user: User | null;
+	$: user;
 
 	const handleSupport = () => {
 		(window as any).$chatwoot.toggle('open');
@@ -31,23 +33,21 @@
 			action: {
 				label: 'Yes',
 				onClick: () => {
-					signOut();
-					toast.success('Logged out!',{
-						position: 'top-center',
+					logout();
+					toast.success('Logged out!', {
+						position: 'top-center'
 					});
 				}
 			}
 		});
 	};
 
+	getUser((data) => {
+		user = data || null;
+	});
+
 	onMount(() => {
 		AOS.init();
-		pb.authStore.onChange(() => {
-			user = getUser() || null;
-		});
-		user = getUser() || null;
-		
-		if(isLoggedIn()) goto('/paste-link');
 	});
 </script>
 
@@ -80,13 +80,13 @@
 					<DropdownMenu.Trigger asChild let:builder>
 						<Button variant="ghost" builders={[builder]}>
 							<Avatar.Root class="relative h-[1.5rem] w-[1.5rem]">
-								<Avatar.Image src={user.metaData.avatarUrl} alt="@shadcn" />
+								<Avatar.Image src={user.photoURL} alt="@shadcn" />
 								<Avatar.Fallback>CN</Avatar.Fallback>
 							</Avatar.Root>
 						</Button>
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
-						<DropdownMenu.Label>{user.metaData.name}</DropdownMenu.Label>
+						<DropdownMenu.Label>{user.displayName}</DropdownMenu.Label>
 						<DropdownMenu.Separator />
 						<DropdownMenu.Item on:click={handleLogout}>
 							<span>Logout</span>

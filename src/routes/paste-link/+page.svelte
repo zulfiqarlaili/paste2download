@@ -11,6 +11,8 @@
 	import { urlHero } from '$lib/store';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { isLoggedIn, pb, signInAndSaveMetaData } from '$lib/pb';
+	import { getAuth, onAuthStateChanged, signInWithPopup, TwitterAuthProvider } from 'firebase/auth';
+	import { app, getUser } from '$lib/firebase';
 
 	let link: string = '';
 	let thumbNail: string = '';
@@ -126,16 +128,97 @@
 	};
 
 	const handleSocialLogin = async () => {
-		signInAndSaveMetaData().catch((error) => {
-			toast.error('Failed: ' + error.message, {
-				position: 'top-right'
+		// signInAndSaveMetaData().catch((error) => {
+		// 	toast.error('Failed: ' + error.message, {
+		// 		position: 'top-right'
+		// 	});
+		// });
+		console.log('hello');
+		// const auth = getAuth();
+		// getRedirectResult(auth)
+		// 	.then((result) => {
+		// 		const auth = getAuth();
+		// 		getRedirectResult(auth)
+		// 			.then((result) => {
+		// 				// This gives you a the Twitter OAuth 1.0 Access Token and Secret.
+		// 				// You can use these server side with your app's credentials to access the Twitter API.
+		// 				if (result) {
+		// 					const credential = TwitterAuthProvider.credentialFromResult(result);
+		// 					const token = credential?.accessToken;
+		// 					const secret = credential?.secret;
+		// 					// ...
+
+		// 					// The signed-in user info.
+		// 					const user = result?.user;
+		// 					// IdP data available using getAdditionalUserInfo(result)
+		// 					// ...
+		// 				}
+		// 			})
+		// 			.catch((error) => {
+		// 				// Handle Errors here.
+		// 				const errorCode = error.code;
+		// 				const errorMessage = error.message;
+		// 				// The email of the user's account used.
+		// 				const email = error.customData.email;
+		// 				// The AuthCredential type that was used.
+		// 				const credential = TwitterAuthProvider.credentialFromError(error);
+		// 				// ...
+		// 			}); // You can use these server side with your app's credentials to access the Twitter API.
+		// 		if (result) {
+		// 			const credential = TwitterAuthProvider.credentialFromResult(result);
+		// 			const token = credential?.accessToken;
+		// 			const secret = credential?.secret;
+		// 			// ...
+
+		// 			// The signed-in user info.
+		// 			const user = result?.user;
+		// 			console.log(user);
+		// 			// IdP data available using getAdditionalUserInfo(result)
+		// 			// ...
+		// 		}
+		// 	})
+		// 	.catch((error) => {
+		// 		// Handle Errors here.
+		// 		const errorCode = error.code;
+		// 		const errorMessage = error.message;
+		// 		// The email of the user's account used.
+		// 		const email = error.customData.email;
+		// 		// The AuthCredential type that was used.
+		// 		const credential = TwitterAuthProvider.credentialFromError(error);
+		// 		// ...
+		// 	});
+		const auth = getAuth();
+		const provider = new TwitterAuthProvider();
+		signInWithPopup(auth, provider)
+			.then((result) => {
+				// This gives you a the Twitter OAuth 1.0 Access Token and Secret.
+				// You can use these server side with your app's credentials to access the Twitter API.
+				const credential = TwitterAuthProvider.credentialFromResult(result);
+				const token = credential?.accessToken;
+				const secret = credential?.secret;
+
+				// The signed-in user info.
+				const user = result.user;
+				console.log(user);
+				console.log(token);
+				console.log(secret);
+				// IdP data available using getAdditionalUserInfo(result)
+				// ...
+			})
+			.catch((error) => {
+				// Handle Errors here.
+				const errorCode = error.code;
+				const errorMessage = error.message;
+				// The email of the user's account used.
+				const email = error.customData.email;
+				// The AuthCredential type that was used.
+				const credential = TwitterAuthProvider.credentialFromError(error);
+				// ...
 			});
-		});
 	};
 
-	const handlePostSocialMedia = async () => {
-		console.log(getUser())
-	};
+	const handlePostSocialMedia = async () => {};
+	
 
 	onMount(() => {
 		if ($urlHero) {
@@ -242,7 +325,7 @@
 					data-umami-event="Social post button"
 					variant="secondary"
 					class="mx-auto mb-4 block w-full max-w-md"
-					on:click = {handlePostSocialMedia}
+					on:click={handlePostSocialMedia}
 				>
 					Post to X
 				</Button>
