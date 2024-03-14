@@ -18,15 +18,11 @@ export const getUser = (callback: (user: User | null) => void) => {
 	onMount(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
 			if (user) {
-				// User is signed in
 				callback(user);
 			} else {
-				// User is signed out
 				callback(null);
 			}
 		});
-
-		// Clean up function to unsubscribe when component is destroyed
 		return unsubscribe;
 	});
 };

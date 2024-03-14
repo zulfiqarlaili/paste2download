@@ -11,7 +11,7 @@
 	import { urlHero } from '$lib/store';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { isLoggedIn, pb, signInAndSaveMetaData } from '$lib/pb';
-	import { getAuth, onAuthStateChanged, signInWithPopup, TwitterAuthProvider } from 'firebase/auth';
+	import { getAuth, onAuthStateChanged, signInWithPopup, TwitterAuthProvider, type User } from 'firebase/auth';
 	import { app, getUser } from '$lib/firebase';
 
 	let link: string = '';
@@ -19,7 +19,7 @@
 	let title: string = '';
 	let downloadUrl: string = '';
 	let isLoading: boolean = false;
-	let isLogin: boolean = false;
+	let user: User | null;
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S+/;
@@ -128,97 +128,29 @@
 	};
 
 	const handleSocialLogin = async () => {
-		// signInAndSaveMetaData().catch((error) => {
-		// 	toast.error('Failed: ' + error.message, {
-		// 		position: 'top-right'
-		// 	});
-		// });
-		console.log('hello');
-		// const auth = getAuth();
-		// getRedirectResult(auth)
-		// 	.then((result) => {
-		// 		const auth = getAuth();
-		// 		getRedirectResult(auth)
-		// 			.then((result) => {
-		// 				// This gives you a the Twitter OAuth 1.0 Access Token and Secret.
-		// 				// You can use these server side with your app's credentials to access the Twitter API.
-		// 				if (result) {
-		// 					const credential = TwitterAuthProvider.credentialFromResult(result);
-		// 					const token = credential?.accessToken;
-		// 					const secret = credential?.secret;
-		// 					// ...
-
-		// 					// The signed-in user info.
-		// 					const user = result?.user;
-		// 					// IdP data available using getAdditionalUserInfo(result)
-		// 					// ...
-		// 				}
-		// 			})
-		// 			.catch((error) => {
-		// 				// Handle Errors here.
-		// 				const errorCode = error.code;
-		// 				const errorMessage = error.message;
-		// 				// The email of the user's account used.
-		// 				const email = error.customData.email;
-		// 				// The AuthCredential type that was used.
-		// 				const credential = TwitterAuthProvider.credentialFromError(error);
-		// 				// ...
-		// 			}); // You can use these server side with your app's credentials to access the Twitter API.
-		// 		if (result) {
-		// 			const credential = TwitterAuthProvider.credentialFromResult(result);
-		// 			const token = credential?.accessToken;
-		// 			const secret = credential?.secret;
-		// 			// ...
-
-		// 			// The signed-in user info.
-		// 			const user = result?.user;
-		// 			console.log(user);
-		// 			// IdP data available using getAdditionalUserInfo(result)
-		// 			// ...
-		// 		}
-		// 	})
-		// 	.catch((error) => {
-		// 		// Handle Errors here.
-		// 		const errorCode = error.code;
-		// 		const errorMessage = error.message;
-		// 		// The email of the user's account used.
-		// 		const email = error.customData.email;
-		// 		// The AuthCredential type that was used.
-		// 		const credential = TwitterAuthProvider.credentialFromError(error);
-		// 		// ...
-		// 	});
 		const auth = getAuth();
 		const provider = new TwitterAuthProvider();
 		signInWithPopup(auth, provider)
 			.then((result) => {
-				// This gives you a the Twitter OAuth 1.0 Access Token and Secret.
-				// You can use these server side with your app's credentials to access the Twitter API.
 				const credential = TwitterAuthProvider.credentialFromResult(result);
 				const token = credential?.accessToken;
 				const secret = credential?.secret;
 
-				// The signed-in user info.
 				const user = result.user;
-				console.log(user);
-				console.log(token);
-				console.log(secret);
-				// IdP data available using getAdditionalUserInfo(result)
-				// ...
 			})
 			.catch((error) => {
-				// Handle Errors here.
 				const errorCode = error.code;
 				const errorMessage = error.message;
-				// The email of the user's account used.
 				const email = error.customData.email;
-				// The AuthCredential type that was used.
 				const credential = TwitterAuthProvider.credentialFromError(error);
-				// ...
 			});
 	};
 
 	const handlePostSocialMedia = async () => {};
 	
+	getUser((data) => {
+		user = data || null;
+	});
 
 	onMount(() => {
 		if ($urlHero) {
@@ -228,11 +160,6 @@
 				handleSubmit();
 			}
 		}
-		pb.authStore.onChange(() => {
-			isLogin = isLoggedIn() || false;
-		});
-
-		isLogin = isLoggedIn();
 	});
 </script>
 
@@ -281,6 +208,7 @@
 					<p>TikTok</p>
 					<p>Twitter</p>
 					<p>Reddit</p>
+					<p>9GAG</p>
 				</Dialog.Description>
 			</Dialog.Header>
 		</Dialog.Content>
@@ -320,7 +248,7 @@
 			>
 				Download video
 			</Button>
-			{#if isLogin}
+			{#if user}
 				<Button
 					data-umami-event="Social post button"
 					variant="secondary"
@@ -342,7 +270,7 @@
 					</Dialog.Trigger>
 					<Dialog.Content class="max-w-xs rounded-2xl text-center">
 						<Dialog.Header>
-							<Dialog.Title>Login with to share</Dialog.Title>
+							<Dialog.Title>Login with social media</Dialog.Title>
 							<Dialog.Description>
 								<div class="mx-auto mt-4 flex max-w-[10rem] flex-col justify-center space-y-2">
 									<Button variant="outline" on:click={handleSocialLogin}>X (Twitter)</Button>
