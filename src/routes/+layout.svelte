@@ -13,11 +13,10 @@
 	import { Home, MessageCircle } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import * as Avatar from '$lib/components/ui/avatar';
-	import { isLoggedIn, pb, signOut } from '$lib/pb';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { toast } from 'svelte-sonner';
-	import { app, getUser, logout } from '$lib/firebase';
-	import type { User } from 'firebase/auth';
+	import { app, getLoginUser, getUser, logout } from '$lib/firebase';
+	import { type User } from 'firebase/auth';
 
 	let user: User | null;
 	$: user;
@@ -48,6 +47,8 @@
 
 	onMount(() => {
 		AOS.init();
+		user = getLoginUser()
+		if(user) goto('/paste-link');
 	});
 </script>
 

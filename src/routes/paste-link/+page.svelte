@@ -11,7 +11,18 @@
 	import { urlHero } from '$lib/store';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { isLoggedIn, pb, signInAndSaveMetaData } from '$lib/pb';
-	import { getAuth, onAuthStateChanged, signInWithPopup, TwitterAuthProvider, type User } from 'firebase/auth';
+	import {
+	browserLocalPersistence,
+		browserSessionPersistence,
+		getAuth,
+		indexedDBLocalPersistence,
+		inMemoryPersistence,
+		onAuthStateChanged,
+		setPersistence,
+		signInWithPopup,
+		TwitterAuthProvider,
+		type User
+	} from 'firebase/auth';
 	import { app, getUser } from '$lib/firebase';
 
 	let link: string = '';
@@ -70,7 +81,6 @@
 				thumbNail = res.thumbnail;
 				title = res.title;
 				downloadUrl = res.download_url;
-				console.log(res);
 			})
 			.catch((err) => {
 				isLoading = false;
@@ -129,25 +139,41 @@
 
 	const handleSocialLogin = async () => {
 		const auth = getAuth();
-		const provider = new TwitterAuthProvider();
-		signInWithPopup(auth, provider)
-			.then((result) => {
-				const credential = TwitterAuthProvider.credentialFromResult(result);
-				const token = credential?.accessToken;
-				const secret = credential?.secret;
+		setPersistence(auth, browserLocalPersistence)
+			.then(() => {
+				const provider = new TwitterAuthProvider();
+				return signInWithPopup(auth, provider)
+					.then((result) => {
+						const credential = TwitterAuthProvider.credentialFromResult(result);
+						const token = credential?.accessToken;
+						const secret = credential?.secret;
 
-				const user = result.user;
+						const user = result.user;
+
+						toast.success('Logged in successfully!', {
+							position: 'top-right'
+						});
+					})
+					.catch((error) => {
+						const errorCode = error.code;
+						const errorMessage = error.message;
+						const email = error.customData.email;
+						const credential = TwitterAuthProvider.credentialFromError(error);
+						console.log(errorCode, errorMessage, email, credential);
+						toast.error('Failed: ' + error.message, {
+							position: 'top-right'
+						})
+					});
 			})
 			.catch((error) => {
+				// Handle Errors here.
 				const errorCode = error.code;
 				const errorMessage = error.message;
-				const email = error.customData.email;
-				const credential = TwitterAuthProvider.credentialFromError(error);
 			});
 	};
 
 	const handlePostSocialMedia = async () => {};
-	
+
 	getUser((data) => {
 		user = data || null;
 	});

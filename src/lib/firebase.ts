@@ -14,12 +14,17 @@ export const app = initializeApp(firebaseConfig);
 
 export const getUser = (callback: (user: User | null) => void) => {
 	const auth = getAuth();
-
 	onMount(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
 			if (user) {
+				if (localStorage.getItem(`userLogin`)) {
+					localStorage.setItem(`userLogin`, JSON.stringify(user));
+				} else {
+					localStorage.setItem(`userLogin`, JSON.stringify(user));
+				}
 				callback(user);
 			} else {
+				localStorage.removeItem(`userLogin`);
 				callback(null);
 			}
 		});
@@ -30,4 +35,9 @@ export const getUser = (callback: (user: User | null) => void) => {
 export const logout = () => {
 	const auth = getAuth();
 	signOut(auth);
+	localStorage.removeItem(`userLogin`);
+};
+
+export const getLoginUser = () => {
+	return JSON.parse(localStorage.getItem('userLogin') || 'null') || null;
 };
