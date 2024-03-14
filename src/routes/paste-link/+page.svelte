@@ -10,7 +10,6 @@
 	import { onMount } from 'svelte';
 	import { urlHero } from '$lib/store';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import { isLoggedIn, pb, signInAndSaveMetaData } from '$lib/pb';
 	import {
 	browserLocalPersistence,
 		browserSessionPersistence,

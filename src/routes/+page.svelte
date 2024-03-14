@@ -6,16 +6,8 @@
 	import { urlHero } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { Separator } from '$lib/components/ui/separator';
-	import { signInAndSaveMetaData } from '$lib/pb';
 	import { toast } from 'svelte-sonner';
 
-	const handleSubmit = async () => {
-		signInAndSaveMetaData().catch((error) => {
-			toast.error('Failed: ' + error.message, {
-				position: 'top-right'
-			});
-		});
-	};
 </script>
 
 <div class="mx-auto mt-20 max-w-7xl px-5">
@@ -124,7 +116,7 @@
 			Enter the video URL and experience our hassle-free download process.
 		</p>
 		<!-- <Button data-umami-event="Landing Get Started button" href="/paste-link">Get Started</Button> -->
-		<Button data-umami-event="Landing Get Started button" on:click={handleSubmit}
+		<Button data-umami-event="Landing Get Started button" on:click={() => goto('/paste-link')}
 			>Get Started</Button
 		>
 	</div>
