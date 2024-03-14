@@ -11,18 +11,14 @@
 	import { urlHero } from '$lib/store';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import {
-	browserLocalPersistence,
-		browserSessionPersistence,
+		browserLocalPersistence,
 		getAuth,
-		indexedDBLocalPersistence,
-		inMemoryPersistence,
-		onAuthStateChanged,
 		setPersistence,
 		signInWithPopup,
 		TwitterAuthProvider,
 		type User
 	} from 'firebase/auth';
-	import { app, getUser } from '$lib/firebase';
+	import { getUser, signInWithTwitter } from '$lib/firebase';
 
 	let link: string = '';
 	let thumbNail: string = '';
@@ -137,37 +133,16 @@
 	};
 
 	const handleSocialLogin = async () => {
-		const auth = getAuth();
-		setPersistence(auth, browserLocalPersistence)
+		signInWithTwitter()
 			.then(() => {
-				const provider = new TwitterAuthProvider();
-				return signInWithPopup(auth, provider)
-					.then((result) => {
-						const credential = TwitterAuthProvider.credentialFromResult(result);
-						const token = credential?.accessToken;
-						const secret = credential?.secret;
-
-						const user = result.user;
-
-						toast.success('Logged in successfully!', {
-							position: 'top-right'
-						});
-					})
-					.catch((error) => {
-						const errorCode = error.code;
-						const errorMessage = error.message;
-						const email = error.customData.email;
-						const credential = TwitterAuthProvider.credentialFromError(error);
-						console.log(errorCode, errorMessage, email, credential);
-						toast.error('Failed: ' + error.message, {
-							position: 'top-right'
-						})
-					});
+				toast.success('Logged in successfully!', {
+					position: 'top-right'
+				});
 			})
 			.catch((error) => {
-				// Handle Errors here.
-				const errorCode = error.code;
-				const errorMessage = error.message;
+				toast.error('Failed: ' + error.message, {
+					position: 'top-right'
+				});
 			});
 	};
 

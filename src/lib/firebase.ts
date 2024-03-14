@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signOut, type User } from 'firebase/auth';
+import { browserLocalPersistence, getAuth, onAuthStateChanged, setPersistence, signInWithPopup, signOut, TwitterAuthProvider, type User } from 'firebase/auth';
 import { onMount } from 'svelte';
 const firebaseConfig = {
 	apiKey: 'AIzaSyCihNhVlPzcunUYfPzD2SKQYuQox5NMpP0',
@@ -11,9 +11,9 @@ const firebaseConfig = {
 };
 
 export const app = initializeApp(firebaseConfig);
+const auth = getAuth();
 
 export const getUser = (callback: (user: User | null) => void) => {
-	const auth = getAuth();
 	onMount(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
 			if (user) {
@@ -33,7 +33,6 @@ export const getUser = (callback: (user: User | null) => void) => {
 };
 
 export const logout = () => {
-	const auth = getAuth();
 	signOut(auth);
 	localStorage.removeItem(`userLogin`);
 };
@@ -41,3 +40,32 @@ export const logout = () => {
 export const getLoginUser = () => {
 	return JSON.parse(localStorage.getItem('userLogin') || 'null') || null;
 };
+
+export const signInWithTwitter = (): Promise<void> => {
+	return new Promise((resolve, reject) => {
+		setPersistence(auth, browserLocalPersistence)
+			.then(() => {
+				const provider = new TwitterAuthProvider();
+				signInWithPopup(auth, provider)
+					.then((result) => {
+						const credential = TwitterAuthProvider.credentialFromResult(result);
+						const token = credential?.accessToken;
+						const secret = credential?.secret;
+						console.log(token, secret);
+						resolve();
+					})
+					.catch((error) => {
+						const errorCode = error.code;
+						const errorMessage = error.message;
+						const email = error.customData.email;
+						const credential = TwitterAuthProvider.credentialFromError(error);
+						console.log(errorCode, errorMessage, email, credential);
+						reject(error);
+					});
+			})
+			.catch((error) => {
+				console.log(`${error.code}: ${error.message}`);
+				reject(error);
+			}); 
+	});
+}
