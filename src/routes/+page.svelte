@@ -6,8 +6,6 @@
 	import { urlHero } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { Separator } from '$lib/components/ui/separator';
-	import { toast } from 'svelte-sonner';
-
 </script>
 
 <div class="mx-auto mt-20 max-w-7xl px-5">

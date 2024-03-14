@@ -10,14 +10,7 @@
 	import { onMount } from 'svelte';
 	import { urlHero } from '$lib/store';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import {
-		browserLocalPersistence,
-		getAuth,
-		setPersistence,
-		signInWithPopup,
-		TwitterAuthProvider,
-		type User
-	} from 'firebase/auth';
+	import { type User } from 'firebase/auth';
 	import { getUser, signInWithTwitter } from '$lib/firebase';
 
 	let link: string = '';
