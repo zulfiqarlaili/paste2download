@@ -49,6 +49,11 @@
 		AOS.init();
 		user = getLoginUser()
 		if(user) goto('/paste-link');
+		if(localStorage.getItem('isFirstTime') === 'false'){
+			goto('/paste-link')
+		}else{
+			localStorage.setItem('isFirstTime', 'false')
+		}
 	});
 </script>
 
