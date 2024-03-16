@@ -81,47 +81,35 @@
 	};
 
 	const handleDownload = async () => {
+		// TODO: 
+		// - make call from api file
+		// - add loading on button
 		try {
-			const response = await fetch(downloadUrl);
-			if (!response.ok) {
-				toast.error(`Error downloading the video ${response.status}`, { position: 'top-right' });
-				return;
-			}
-			const contentType = response.headers.get('content-type');
-			const getFileExtension = (contentType: any) => {
-				const videoFormats = {
-					'video/webm': '.webm',
-					'video/ogg': '.ogg',
-					'video/mp4': '.mp4',
-					'video/x-matroska': '.mkv',
-					'video/quicktime': '.mov',
-					'video/x-msvideo': '.avi',
-					'video/x-ms-wmv': '.wmv',
-					'video/mpeg': '.mpeg',
-					'application/x-mpegURL': '.m3u8'
-				};
+			let blobUrl: string = ''; // Variable to store the Blob URL
+			const response: Response = await fetch('http://localhost:8000/get_video_blob/?url='+link);
+			const blob: Blob = await response.blob();
 
-				for (const [key, value] of Object.entries(videoFormats)) {
-					if (contentType && contentType.includes(key)) {
-						return value;
-					}
-				}
+			// Create a Blob URL
+			blobUrl = URL.createObjectURL(blob);
 
-				return '.mp4'; // Default to .mp4 if content type is unknown
-			};
-			const fileExtension = getFileExtension(contentType);
-			const fileName = `${title}${fileExtension}`;
-			const blob = await response.blob();
-			const anchorElement = document.createElement('a');
-			anchorElement.href = window.URL.createObjectURL(blob);
-			anchorElement.download = fileName;
-			document.body.appendChild(anchorElement);
-			await anchorElement.click();
-			document.body.removeChild(anchorElement);
+			// Create a hidden link element
+			const data: HTMLAnchorElement = document.createElement('a');
+			data.href = blobUrl;
+			data.download = ''; // Set desired filename for the downloaded file
+			data.style.display = 'none';
+
+			// Append the link to the document body
+			document.body.appendChild(data);
+
+			// Simulate a click event to trigger the download
+			data.click();
+
+			// Cleanup: remove the link and revoke the Blob URL
+			document.body.removeChild(data);
+			URL.revokeObjectURL(blobUrl);
+			toast.success('Video downloaded successfully', { position: 'top-right' });
 		} catch (error) {
-			toast.error('Error downloading the video', {
-				position: 'top-right'
-			});
+			toast.error(`Error downloading the video ${error}`, { position: 'top-right' });
 		}
 	};
 

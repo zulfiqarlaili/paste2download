@@ -1,5 +1,14 @@
 import { initializeApp } from 'firebase/app';
-import { browserLocalPersistence, getAuth, onAuthStateChanged, setPersistence, signInWithPopup, signOut, TwitterAuthProvider, type User } from 'firebase/auth';
+import {
+	browserLocalPersistence,
+	getAuth,
+	onAuthStateChanged,
+	setPersistence,
+	signInWithPopup,
+	signOut,
+	TwitterAuthProvider,
+	type User
+} from 'firebase/auth';
 import { onMount } from 'svelte';
 const firebaseConfig = {
 	apiKey: 'AIzaSyCihNhVlPzcunUYfPzD2SKQYuQox5NMpP0',
@@ -35,6 +44,8 @@ export const getUser = (callback: (user: User | null) => void) => {
 export const logout = () => {
 	signOut(auth);
 	localStorage.removeItem(`userLogin`);
+	localStorage.removeItem(`token`);
+	localStorage.removeItem(`secret`);
 };
 
 export const getLoginUser = () => {
@@ -49,9 +60,8 @@ export const signInWithTwitter = (): Promise<void> => {
 				signInWithPopup(auth, provider)
 					.then((result) => {
 						const credential = TwitterAuthProvider.credentialFromResult(result);
-						const token = credential?.accessToken;
-						const secret = credential?.secret;
-						console.log(token, secret);
+						localStorage.setItem('token', credential?.accessToken || '');
+						localStorage.setItem('secret', credential?.secret || '');
 						resolve();
 					})
 					.catch((error) => {
@@ -66,6 +76,6 @@ export const signInWithTwitter = (): Promise<void> => {
 			.catch((error) => {
 				console.log(`${error.code}: ${error.message}`);
 				reject(error);
-			}); 
+			});
 	});
-}
+};
