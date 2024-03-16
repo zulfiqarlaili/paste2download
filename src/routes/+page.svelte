@@ -102,7 +102,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="my-20 text-center" data-aos="zoom-in" data-aos-delay="300">
+	<div class="my-20 text-center" data-aos="fade-up" data-aos-delay="300">
 		<h1
 			class="mx-auto mb-4 max-w-2xl text-4xl font-extrabold leading-none tracking-tight md:text-5xl xl:text-6xl"
 		>
@@ -113,11 +113,18 @@
 		>
 			Enter the video URL and experience our hassle-free download process.
 		</p>
-		<Button data-umami-event="Landing Get Started button" href="/paste-link">Get Started</Button>
+		<!-- <Button data-umami-event="Landing Get Started button" href="/paste-link">Get Started</Button> -->
+		<Button data-umami-event="Landing Get Started button" on:click={() => goto('/paste-link')}
+			>Get Started</Button
+		>
 	</div>
 	<Separator />
 </div>
-<div class="mx-auto mt-16 flex max-w-md flex-col items-center justify-center px-12" data-aos="fade-up" data-aos-delay="300">
+<div
+	class="mx-auto mt-16 flex max-w-md flex-col items-center justify-center px-12"
+	data-aos="fade-up"
+	data-aos-delay="300"
+>
 	<h1
 		class="mb-8 max-w-2xl text-2xl font-extrabold leading-none tracking-tight md:text-4xl xl:text-4xl"
 	>
@@ -152,9 +159,23 @@
 		</li>
 		<li class="mb-10 ms-6">
 			<span
-				class="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-4 ring-white dark:bg-gray-700 dark:ring-gray-900"
+				class="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-green-200 ring-4 ring-white dark:bg-green-900 dark:ring-gray-900"
 			>
-				<Hammer class="h-4 w-4 text-gray-500 dark:text-gray-400" />
+				<svg
+					class="h-3.5 w-3.5 text-green-500 dark:text-green-400"
+					aria-hidden="true"
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 16 12"
+				>
+					<path
+						stroke="currentColor"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M1 5.917 5.724 10.5 15 1.5"
+					/>
+				</svg>
 			</span>
 			<h3 class="font-medium leading-tight">Seamless Social Media Integration</h3>
 			<p class="text-sm text-muted-foreground">

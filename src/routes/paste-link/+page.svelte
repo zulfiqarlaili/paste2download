@@ -2,20 +2,25 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import { ClipboardPaste } from 'lucide-svelte';
-	import { getVideoInfo } from '$lib/api';
+	import { ClipboardPaste, TwitterIcon } from 'lucide-svelte';
+	import { getVideoBlob, getVideoInfo, postVideoToSocialMedia } from '$lib/api';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import Loader2 from 'lucide-svelte/icons/loader-2';
 	import { onMount } from 'svelte';
 	import { urlHero } from '$lib/store';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import { type User } from 'firebase/auth';
+	import { getUser, signInWithTwitter } from '$lib/firebase';
 
 	let link: string = '';
 	let thumbNail: string = '';
 	let title: string = '';
 	let downloadUrl: string = '';
 	let isLoading: boolean = false;
+	let isDownloadLoading: boolean = false;
+	let isPostVideoLoading: boolean = false;
+	let user: User | null;
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S+/;
@@ -40,6 +45,7 @@
 			}
 		}
 	};
+
 	const handleLinkValidation = () => {
 		if (!isValidLink(link)) {
 			toast.error('Invalid link', {
@@ -65,9 +71,11 @@
 				thumbNail = res.thumbnail;
 				title = res.title;
 				downloadUrl = res.download_url;
+				console.log(res);
 			})
 			.catch((err) => {
 				isLoading = false;
+				console.log(err);
 				toast.error('Failed: ' + err.message, {
 					position: 'top-right'
 				});
@@ -76,49 +84,74 @@
 	};
 
 	const handleDownload = async () => {
-		try {
-			const response = await fetch(downloadUrl);
-			if (!response.ok) {
-				toast.error(`Error downloading the video ${response.status}`, { position: 'top-right' });
-				return;
-			}
-			const contentType = response.headers.get('content-type');
-			const getFileExtension = (contentType: any) => {
-				const videoFormats = {
-					'video/webm': '.webm',
-					'video/ogg': '.ogg',
-					'video/mp4': '.mp4',
-					'video/x-matroska': '.mkv',
-					'video/quicktime': '.mov',
-					'video/x-msvideo': '.avi',
-					'video/x-ms-wmv': '.wmv',
-					'video/mpeg': '.mpeg',
-					'application/x-mpegURL': '.m3u8'
-				};
+		isDownloadLoading = true;
+		getVideoBlob(link)
+			.then((blob) => {
+				let blobUrl = URL.createObjectURL(blob);
 
-				for (const [key, value] of Object.entries(videoFormats)) {
-					if (contentType && contentType.includes(key)) {
-						return value;
-					}
-				}
+				const data: HTMLAnchorElement = document.createElement('a');
+				data.href = blobUrl;
+				data.download = `${title}.mp4`;
+				data.style.display = 'none';
 
-				return '.mp4'; // Default to .mp4 if content type is unknown
-			};
-			const fileExtension = getFileExtension(contentType);
-			const fileName = `${title}${fileExtension}`;
-			const blob = await response.blob();
-			const anchorElement = document.createElement('a');
-			anchorElement.href = window.URL.createObjectURL(blob);
-			anchorElement.download = fileName;
-			document.body.appendChild(anchorElement);
-			await anchorElement.click();
-			document.body.removeChild(anchorElement);
-		} catch (error) {
-			toast.error('Error downloading the video', {
-				position: 'top-right'
+				document.body.appendChild(data);
+
+				data.click();
+
+				document.body.removeChild(data);
+				URL.revokeObjectURL(blobUrl);
+				toast.success('Video downloaded successfully', { position: 'top-right' });
+				isDownloadLoading = false;
+			})
+			.catch((err) => {
+				toast.error('Failed: ' + err.message, {
+					position: 'top-right'
+				});
+				isDownloadLoading = false;
 			});
-		}
 	};
+
+	const handleSocialLogin = async () => {
+		signInWithTwitter()
+			.then(() => {
+				toast.success('Logged in successfully!', {
+					position: 'top-right'
+				});
+			})
+			.catch((error) => {
+				toast.error('Failed: ' + error.message, {
+					position: 'top-right'
+				});
+			});
+	};
+
+	const handlePostSocialMedia = async () => {
+		isPostVideoLoading = true;
+		toast.info(
+			`Video processing initiated. Duration may vary. Our server will handle it. You safely can close this page.`,
+			{
+				position: 'top-right',
+				duration: 70000
+			}
+		);
+		postVideoToSocialMedia(link)
+			.then(() => {
+				isPostVideoLoading = false;
+				toast.success('Posted successfully!', {
+					position: 'top-right'
+				});
+			})
+			.catch((error) => {
+				isPostVideoLoading = false;
+				toast.error('Failed: ' + error.message, {
+					position: 'top-right'
+				});
+			});
+	};
+
+	getUser((data) => {
+		user = data || null;
+	});
 
 	onMount(() => {
 		if ($urlHero) {
@@ -176,6 +209,7 @@
 					<p>TikTok</p>
 					<p>Twitter</p>
 					<p>Reddit</p>
+					<p>9GAG</p>
 				</Dialog.Description>
 			</Dialog.Header>
 		</Dialog.Content>
@@ -203,18 +237,60 @@
 	{/if}
 	{#if thumbNail}
 		<Separator class="my-8" />
-		<div data-aos="fade-up" class="mx-auto max-w-md px-5">
-			<p class="mx-auto mb-6 mt-4 max-w-md text-center text-lg font-medium">{title}</p>
+		<div class="mx-auto max-w-md px-5">
+			<p class="mx-auto mb-6 mt-4 max-w-md text-center text-2xl font-medium">{title}</p>
 			<video class="mb-6 rounded-lg shadow-md" controls src={downloadUrl}
 				><track kind="captions" /></video
 			>
 			<Button
 				data-umami-event="Download button"
-				class="mx-auto mb-20 block w-full max-w-md"
+				class="mx-auto mb-4 w-full max-w-md"
+				disabled={isDownloadLoading}
 				on:click={handleDownload}
 			>
-				Download
+				{#if isDownloadLoading}
+					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+				{:else}
+					<span>Download video</span>
+				{/if}
 			</Button>
+			{#if user}
+				<Button
+					data-umami-event="Social post button"
+					variant="secondary"
+					class="mx-auto mb-4 w-full max-w-md"
+					disabled={isPostVideoLoading}
+					on:click={handlePostSocialMedia}
+				>
+					{#if isPostVideoLoading}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+					{:else}
+						<span>Post to X</span>
+					{/if}
+				</Button>
+			{:else}
+				<Dialog.Root>
+					<Dialog.Trigger class="mx-auto mb-20 block w-full max-w-md">
+						<Button
+							data-umami-event="Social login button"
+							variant="secondary"
+							class="w-full max-w-md"
+						>
+							Login to Share
+						</Button>
+					</Dialog.Trigger>
+					<Dialog.Content class="max-w-xs rounded-2xl text-center">
+						<Dialog.Header>
+							<Dialog.Title>Login with social media</Dialog.Title>
+							<Dialog.Description>
+								<div class="mx-auto mt-4 flex max-w-[10rem] flex-col justify-center space-y-2">
+									<Button variant="outline" on:click={handleSocialLogin}>X (Twitter)</Button>
+								</div>
+							</Dialog.Description>
+						</Dialog.Header>
+					</Dialog.Content>
+				</Dialog.Root>
+			{/if}
 		</div>
 	{/if}
 </div>

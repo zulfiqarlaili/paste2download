@@ -12,17 +12,52 @@
 	import { page } from '$app/stores';
 	import { Home, MessageCircle } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
+	import * as Avatar from '$lib/components/ui/avatar';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { toast } from 'svelte-sonner';
+	import { app, getLoginUser, getUser, logout } from '$lib/firebase';
+	import { type User } from 'firebase/auth';
+
+	let user: User | null;
+	$: user;
 
 	const handleSupport = () => {
 		(window as any).$chatwoot.toggle('open');
 	};
 
+	const handleLogout = () => {
+		toast.message('You sure want to log out?', {
+			position: 'top-center',
+			duration: 3000,
+			action: {
+				label: 'Yes',
+				onClick: () => {
+					logout();
+					toast.success('Logged out!', {
+						position: 'top-center'
+					});
+				}
+			}
+		});
+	};
+
+	getUser((data) => {
+		user = data || null;
+	});
+
 	onMount(() => {
 		AOS.init();
+		user = getLoginUser()
+		if(user) goto('/paste-link');
+		if(localStorage.getItem('isFirstTime') === 'false'){
+			goto('/paste-link')
+		}else{
+			localStorage.setItem('isFirstTime', 'false')
+		}
 	});
 </script>
 
-<nav >
+<nav>
 	<div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between px-4 pt-1">
 		<Button on:click={() => goto('/')} variant="ghost" size="icon">
 			<Home class="h-5 w-5" />
@@ -46,6 +81,25 @@
 					/>
 				</Button>
 			</div>
+			{#if user}
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger asChild let:builder>
+						<Button variant="ghost" builders={[builder]}>
+							<Avatar.Root class="relative h-[1.5rem] w-[1.5rem]">
+								<Avatar.Image src={user.photoURL} alt="@shadcn" />
+								<Avatar.Fallback>CN</Avatar.Fallback>
+							</Avatar.Root>
+						</Button>
+					</DropdownMenu.Trigger>
+					<DropdownMenu.Content>
+						<DropdownMenu.Label>{user.displayName}</DropdownMenu.Label>
+						<DropdownMenu.Separator />
+						<DropdownMenu.Item on:click={handleLogout}>
+							<span>Logout</span>
+						</DropdownMenu.Item>
+					</DropdownMenu.Content>
+				</DropdownMenu.Root>
+			{/if}
 		</div>
 	</div>
 </nav>
