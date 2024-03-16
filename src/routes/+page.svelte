@@ -159,9 +159,23 @@
 		</li>
 		<li class="mb-10 ms-6">
 			<span
-				class="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 ring-4 ring-white dark:bg-gray-700 dark:ring-gray-900"
+				class="absolute -start-4 flex h-8 w-8 items-center justify-center rounded-full bg-green-200 ring-4 ring-white dark:bg-green-900 dark:ring-gray-900"
 			>
-				<Hammer class="h-4 w-4 text-gray-500 dark:text-gray-400" />
+				<svg
+					class="h-3.5 w-3.5 text-green-500 dark:text-green-400"
+					aria-hidden="true"
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 16 12"
+				>
+					<path
+						stroke="currentColor"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M1 5.917 5.724 10.5 15 1.5"
+					/>
+				</svg>
 			</span>
 			<h3 class="font-medium leading-tight">Seamless Social Media Integration</h3>
 			<p class="text-sm text-muted-foreground">
