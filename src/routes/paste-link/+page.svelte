@@ -3,7 +3,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
 	import { ClipboardPaste, TwitterIcon } from 'lucide-svelte';
-	import { getVideoBlob, getVideoInfo } from '$lib/api';
+	import { getVideoBlob, getVideoInfo, postVideoToSocialMedia } from '$lib/api';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import Loader2 from 'lucide-svelte/icons/loader-2';
@@ -19,6 +19,7 @@
 	let downloadUrl: string = '';
 	let isLoading: boolean = false;
 	let isDownloadLoading: boolean = false;
+	let isPostVideoLoading: boolean = false;
 	let user: User | null;
 
 	const isValidLink = (link: string): boolean => {
@@ -70,6 +71,7 @@
 				thumbNail = res.thumbnail;
 				title = res.title;
 				downloadUrl = res.download_url;
+				console.log(res);
 			})
 			.catch((err) => {
 				isLoading = false;
@@ -123,7 +125,29 @@
 			});
 	};
 
-	const handlePostSocialMedia = async () => {};
+	const handlePostSocialMedia = async () => {
+		isPostVideoLoading = true;
+		toast.info(
+			`Video processing initiated. Duration may vary. Our server will handle it. You safely can close this page.`,
+			{
+				position: 'top-right',
+				duration: 70000
+			}
+		);
+		postVideoToSocialMedia(link)
+			.then(() => {
+				isPostVideoLoading = false;
+				toast.success('Posted successfully!', {
+					position: 'top-right'
+				});
+			})
+			.catch((error) => {
+				isPostVideoLoading = false;
+				toast.error('Failed: ' + error.message, {
+					position: 'top-right'
+				});
+			});
+	};
 
 	getUser((data) => {
 		user = data || null;
@@ -234,10 +258,15 @@
 				<Button
 					data-umami-event="Social post button"
 					variant="secondary"
-					class="mx-auto mb-4 block w-full max-w-md"
+					class="mx-auto mb-4 w-full max-w-md"
+					disabled={isPostVideoLoading}
 					on:click={handlePostSocialMedia}
 				>
-					Post to X
+					{#if isPostVideoLoading}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+					{:else}
+						<span>Post to X</span>
+					{/if}
 				</Button>
 			{:else}
 				<Dialog.Root>
