@@ -3,7 +3,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
 	import { ClipboardPaste, TwitterIcon } from 'lucide-svelte';
-	import { getVideoInfo } from '$lib/api';
+	import { getVideoBlob, getVideoInfo } from '$lib/api';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import Loader2 from 'lucide-svelte/icons/loader-2';
@@ -18,6 +18,7 @@
 	let title: string = '';
 	let downloadUrl: string = '';
 	let isLoading: boolean = false;
+	let isDownloadLoading: boolean = false;
 	let user: User | null;
 
 	const isValidLink = (link: string): boolean => {
@@ -81,36 +82,31 @@
 	};
 
 	const handleDownload = async () => {
-		// TODO: 
-		// - make call from api file
-		// - add loading on button
-		try {
-			let blobUrl: string = ''; // Variable to store the Blob URL
-			const response: Response = await fetch('http://localhost:8000/get_video_blob/?url='+link);
-			const blob: Blob = await response.blob();
+		isDownloadLoading = true;
+		getVideoBlob(link)
+			.then((blob) => {
+				let blobUrl = URL.createObjectURL(blob);
 
-			// Create a Blob URL
-			blobUrl = URL.createObjectURL(blob);
+				const data: HTMLAnchorElement = document.createElement('a');
+				data.href = blobUrl;
+				data.download = `${title}.mp4`;
+				data.style.display = 'none';
 
-			// Create a hidden link element
-			const data: HTMLAnchorElement = document.createElement('a');
-			data.href = blobUrl;
-			data.download = ''; // Set desired filename for the downloaded file
-			data.style.display = 'none';
+				document.body.appendChild(data);
 
-			// Append the link to the document body
-			document.body.appendChild(data);
+				data.click();
 
-			// Simulate a click event to trigger the download
-			data.click();
-
-			// Cleanup: remove the link and revoke the Blob URL
-			document.body.removeChild(data);
-			URL.revokeObjectURL(blobUrl);
-			toast.success('Video downloaded successfully', { position: 'top-right' });
-		} catch (error) {
-			toast.error(`Error downloading the video ${error}`, { position: 'top-right' });
-		}
+				document.body.removeChild(data);
+				URL.revokeObjectURL(blobUrl);
+				toast.success('Video downloaded successfully', { position: 'top-right' });
+				isDownloadLoading = false;
+			})
+			.catch((err) => {
+				toast.error('Failed: ' + err.message, {
+					position: 'top-right'
+				});
+				isDownloadLoading = false;
+			});
 	};
 
 	const handleSocialLogin = async () => {
@@ -224,10 +220,15 @@
 			>
 			<Button
 				data-umami-event="Download button"
-				class="mx-auto mb-4 block w-full max-w-md"
+				class="mx-auto mb-4 w-full max-w-md"
+				disabled={isDownloadLoading}
 				on:click={handleDownload}
 			>
-				Download video
+				{#if isDownloadLoading}
+					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+				{:else}
+					<span>Download video</span>
+				{/if}
 			</Button>
 			{#if user}
 				<Button
