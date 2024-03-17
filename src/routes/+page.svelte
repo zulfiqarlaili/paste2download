@@ -21,6 +21,7 @@
 				autoplay
 				loop
 				playsinline
+				style="pointer-events: none"
 				src="https://joelpublicbucket.s3.ap-southeast-1.amazonaws.com/landing.mov"
 			>
 				<track kind="captions" />
