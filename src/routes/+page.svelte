@@ -15,7 +15,16 @@
 		data-aos-delay="100"
 	>
 		<div class="flex-1 text-center sm:mr-2">
-			<enhanced:img src={heroLogo} alt="Hero" />
+			<video
+				class="mx-auto rounded-lg shadow-lg"
+				controls
+				autoplay
+				loop
+				playsinline
+				src="https://joelpublicbucket.s3.ap-southeast-1.amazonaws.com/landing.mov"
+			>
+				<track kind="captions" />
+			</video>
 		</div>
 		<div class="flex-1 text-center sm:ml-2">
 			<h1
