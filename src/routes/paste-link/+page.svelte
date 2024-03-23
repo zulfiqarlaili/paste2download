@@ -13,7 +13,6 @@
 	import { type User } from 'firebase/auth';
 	import { getUser, signInWithTwitter } from '$lib/firebase';
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
 	import { mediaQuery } from 'svelte-legos';
 	import { Textarea } from '$lib/components/ui/textarea';
 
@@ -264,24 +263,10 @@
 				{/if}
 			</Button>
 			{#if user}
-				<!-- <Button
-					data-umami-event="Social post button"
-					variant="secondary"
-					class="mx-auto mb-4 w-full max-w-md"
-					disabled={isPostVideoLoading}
-					on:click={handlePostSocialMedia}
-				>
-					{#if isPostVideoLoading}
-						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-					{:else}
-						<span>Post to X</span>
-					{/if}
-				</Button> -->
 				{#if $isDesktop}
 					<Dialog.Root bind:open>
 						<Dialog.Trigger asChild let:builder>
 							<Button
-								data-umami-event="Social post button"
 								variant="secondary"
 								class="mx-auto mb-4 w-full max-w-md"
 								disabled={isPostVideoLoading}
@@ -307,6 +292,7 @@
 										: 'characters left'}
 								</p>
 								<Button
+									data-umami-event="Social post button"
 									type="submit"
 									disabled={caption ? caption.length > 280 : false || isPostVideoLoading}
 									on:click={handlePostSocialMedia}
@@ -325,7 +311,6 @@
 					<Drawer.Root bind:open>
 						<Drawer.Trigger asChild let:builder>
 							<Button
-								data-umami-event="Social post button"
 								variant="secondary"
 								class="mx-auto mb-4 w-full max-w-md"
 								disabled={isPostVideoLoading}
@@ -351,6 +336,7 @@
 										: 'characters left'}
 								</p>
 								<Button
+									data-umami-event="Social post button"
 									type="submit"
 									disabled={caption ? caption.length > 280 : false || isPostVideoLoading}
 									on:click={handlePostSocialMedia}
