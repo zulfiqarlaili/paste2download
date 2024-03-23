@@ -12,7 +12,12 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { type User } from 'firebase/auth';
 	import { getUser, signInWithTwitter } from '$lib/firebase';
+	import * as Drawer from '$lib/components/ui/drawer/index.js';
+	import { mediaQuery } from 'svelte-legos';
+	import { Textarea } from '$lib/components/ui/textarea';
 
+	const isDesktop = mediaQuery('(min-width: 768px)');
+	let open = false;
 	let link: string = '';
 	let thumbNail: string = '';
 	let title: string = '';
@@ -21,6 +26,7 @@
 	let isDownloadLoading: boolean = false;
 	let isPostVideoLoading: boolean = false;
 	let user: User | null;
+	let caption: string = '';
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S+/;
@@ -131,15 +137,17 @@
 			`Video processing initiated. Duration may vary. Our server will handle it. You safely can close this page.`,
 			{
 				position: 'top-right',
-				duration: 70000
+				duration: 7000
 			}
 		);
-		postVideoToSocialMedia(link)
+		postVideoToSocialMedia(link, caption)
 			.then(() => {
 				isPostVideoLoading = false;
+				caption = '';
 				toast.success('Posted successfully!', {
 					position: 'top-right'
 				});
+				open = false;
 			})
 			.catch((error) => {
 				isPostVideoLoading = false;
@@ -255,19 +263,99 @@
 				{/if}
 			</Button>
 			{#if user}
-				<Button
-					data-umami-event="Social post button"
-					variant="secondary"
-					class="mx-auto mb-4 w-full max-w-md"
-					disabled={isPostVideoLoading}
-					on:click={handlePostSocialMedia}
-				>
-					{#if isPostVideoLoading}
-						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-					{:else}
-						<span>Post to X</span>
-					{/if}
-				</Button>
+				{#if $isDesktop}
+					<Dialog.Root bind:open>
+						<Dialog.Trigger asChild let:builder>
+							<Button
+								variant="secondary"
+								class="mx-auto mb-4 w-full max-w-md"
+								disabled={isPostVideoLoading}
+								builders={[builder]}
+							>
+								<span>Post to X</span>
+							</Button>
+						</Dialog.Trigger>
+						<Dialog.Content class="sm:max-w-[425px]">
+							<form class="grid items-start gap-4 px-4">
+								<Textarea
+									bind:value={caption}
+									placeholder="Video caption is optional..."
+									class="resize-none"
+									data-characters-left={Math.max(0, 280 - (caption ? caption.length : 0))}
+								/>
+								<p
+									class={`text-right text-sm text-gray-500 dark:text-gray-400 ${caption && caption.length > 280 ? 'text-red-500' : ''} ${caption && caption.length > 280 ? 'dark:text-red-500' : ''}`}
+								>
+									{280 - (caption ? caption.length : 0)}
+									{caption && caption.length > 280
+										? 'characters left (too long)'
+										: 'characters left'}
+								</p>
+								<Button
+									data-umami-event="Social post button"
+									type="submit"
+									disabled={caption ? caption.length > 280 : false || isPostVideoLoading}
+									on:click={handlePostSocialMedia}
+								>
+									{#if isPostVideoLoading}
+										<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+									{:else}
+										<span>Post</span>
+									{/if}</Button
+								>
+								<Button variant="outline" on:click={() => (open = false)}>Cancel</Button>
+							</form>
+						</Dialog.Content>
+					</Dialog.Root>
+				{:else}
+					<Drawer.Root bind:open>
+						<Drawer.Trigger asChild let:builder>
+							<Button
+								variant="secondary"
+								class="mx-auto mb-4 w-full max-w-md"
+								disabled={isPostVideoLoading}
+								builders={[builder]}
+							>
+								<span>Post</span>
+							</Button>
+						</Drawer.Trigger>
+						<Drawer.Content>
+							<form class="grid items-start gap-4 px-4">
+								<Textarea
+									bind:value={caption}
+									placeholder="Video caption is optional..."
+									class="resize-none"
+									data-characters-left={Math.max(0, 280 - (caption ? caption.length : 0))}
+								/>
+								<p
+									class={`text-right text-sm text-gray-500 dark:text-gray-400 ${caption && caption.length > 280 ? 'text-red-500' : ''} ${caption && caption.length > 280 ? 'dark:text-red-500' : ''}`}
+								>
+									{280 - (caption ? caption.length : 0)}
+									{caption && caption.length > 280
+										? 'characters left (too long)'
+										: 'characters left'}
+								</p>
+								<Button
+									data-umami-event="Social post button"
+									type="submit"
+									disabled={caption ? caption.length > 280 : false || isPostVideoLoading}
+									on:click={handlePostSocialMedia}
+								>
+									{#if isPostVideoLoading}
+										<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+									{:else}
+										<span>Post</span>
+									{/if}</Button
+								>
+							</form>
+							<Drawer.Footer class="pt-2">
+								<Drawer.Close asChild let:builder>
+									<Button variant="outline" builders={[builder]}>Cancel</Button>
+								</Drawer.Close>
+							</Drawer.Footer>
+						</Drawer.Content>
+					</Drawer.Root>
+				{/if}
 			{:else}
 				<Dialog.Root>
 					<Dialog.Trigger class="mx-auto mb-20 block w-full max-w-md">
