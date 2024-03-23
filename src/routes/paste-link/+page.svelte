@@ -12,10 +12,10 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { type User } from 'firebase/auth';
 	import { getUser, signInWithTwitter } from '$lib/firebase';
-
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { mediaQuery } from 'svelte-legos';
+	import { Textarea } from '$lib/components/ui/textarea';
 
 	let open = false;
 	const isDesktop = mediaQuery('(min-width: 768px)');
@@ -28,6 +28,7 @@
 	let isDownloadLoading: boolean = false;
 	let isPostVideoLoading: boolean = false;
 	let user: User | null;
+	let caption: string = '';
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S+/;
@@ -308,22 +309,20 @@
 				<Button variant="outline" builders={[builder]}>Edit Profile</Button>
 			</Dialog.Trigger>
 			<Dialog.Content class="sm:max-w-[425px]">
-				<Dialog.Header>
-					<Dialog.Title>Edit profile</Dialog.Title>
-					<Dialog.Description>
-						Make changes to your profile here. Click save when you're done.
-					</Dialog.Description>
-				</Dialog.Header>
-				<form class="grid items-start gap-4">
-					<div class="grid gap-2">
-						<Label for="email">Email</Label>
-						<Input type="email" id="email" value="shadcn@example.com" />
-					</div>
-					<div class="grid gap-2">
-						<Label for="username">Username</Label>
-						<Input id="username" value="@shadcn" />
-					</div>
-					<Button type="submit">Save changes</Button>
+				<form class="grid items-start gap-4 px-4">
+					<Textarea
+						bind:value={caption}
+						placeholder="Video caption is optional..."
+						class="resize-none"
+						data-characters-left={Math.max(0, 280 - (caption ? caption.length : 0))}
+					/>
+					<p
+						class={`text-right text-sm text-gray-500 dark:text-gray-400 ${caption && caption.length > 280 ? 'text-red-500' : ''} ${caption && caption.length > 280 ? 'dark:text-red-500' : ''}`}
+					>
+						{280 - (caption ? caption.length : 0)}
+						{caption && caption.length > 280 ? 'characters left (too long)' : 'characters left'}
+					</p>
+					<Button type="submit" disabled={caption ? caption.length > 280 : false}>Post</Button>
 				</form>
 			</Dialog.Content>
 		</Dialog.Root>
@@ -333,22 +332,20 @@
 				<Button variant="outline" builders={[builder]}>Edit Profile</Button>
 			</Drawer.Trigger>
 			<Drawer.Content>
-				<Drawer.Header class="text-left">
-					<Drawer.Title>Edit profile</Drawer.Title>
-					<Drawer.Description>
-						Make changes to your profile here. Click save when you're done.
-					</Drawer.Description>
-				</Drawer.Header>
 				<form class="grid items-start gap-4 px-4">
-					<div class="grid gap-2">
-						<Label for="email">Email</Label>
-						<Input type="email" id="email" value="shadcn@example.com" />
-					</div>
-					<div class="grid gap-2">
-						<Label for="username">Username</Label>
-						<Input id="username" value="@shadcn" />
-					</div>
-					<Button type="submit">Save changes</Button>
+					<Textarea
+						bind:value={caption}
+						placeholder="Video caption is optional..."
+						class="resize-none"
+						data-characters-left={Math.max(0, 280 - (caption ? caption.length : 0))}
+					/>
+					<p
+						class={`text-right text-sm text-gray-500 dark:text-gray-400 ${caption && caption.length > 280 ? 'text-red-500' : ''} ${caption && caption.length > 280 ? 'dark:text-red-500' : ''}`}
+					>
+						{280 - (caption ? caption.length : 0)}
+						{caption && caption.length > 280 ? 'characters left (too long)' : 'characters left'}
+					</p>
+					<Button type="submit" disabled={caption ? caption.length > 280 : false}>Post</Button>
 				</form>
 				<Drawer.Footer class="pt-2">
 					<Drawer.Close asChild let:builder>
