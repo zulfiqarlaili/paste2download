@@ -25,6 +25,7 @@
 	let isLoading: boolean = false;
 	let isDownloadLoading: boolean = false;
 	let isPostVideoLoading: boolean = false;
+	let isShowThumbnail: boolean = false;
 	let user: User | null;
 	let caption: string = '';
 
@@ -72,12 +73,12 @@
 		downloadUrl = '';
 
 		getVideoInfo(link)
-			.then((res: any) => {
+			.then(async (res: any) => {
 				isLoading = false;
 				thumbNail = res.thumbnail;
 				title = res.title;
 				downloadUrl = res.download_url;
-				console.log(res);
+				isShowThumbnail = (await fetch(res.download_url)).status !== 200;
 			})
 			.catch((err) => {
 				isLoading = false;
@@ -247,9 +248,20 @@
 		<Separator class="my-8" />
 		<div class="mx-auto max-w-md px-5">
 			<p class="mx-auto mb-6 mt-4 max-w-md text-center text-2xl font-medium">{title}</p>
-			<video class="mb-6 rounded-lg shadow-md" controls src={downloadUrl}
-				><track kind="captions" /></video
-			>
+			{#if isShowThumbnail}
+				<img
+					class="mb-6 rounded-lg shadow-md"
+					src={thumbNail}
+					alt={title}
+					on:error={() => {
+						isShowThumbnail = false;
+					}}
+				/>
+			{:else}
+				<video class="mb-6 rounded-lg shadow-md" controls src={downloadUrl}
+					><track kind="captions" /></video
+				>
+			{/if}
 			<Button
 				data-umami-event="Download button"
 				class="mx-auto mb-4 w-full max-w-md"
