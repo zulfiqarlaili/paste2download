@@ -1,7 +1,7 @@
 {
 	"name": "Paste 2 Download",
 	"short_name": "Paste 2 Download",
-	"theme_color": "#1A8859",
+	"theme_color": "transparent",
 	"background_color": "#1A8859",
 	"display": "standalone",
 	"scope": "/",
