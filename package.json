@@ -1,6 +1,6 @@
 {
   "name": "paste2download",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "private": true,
   "scripts": {
     "dev": "vite dev",
