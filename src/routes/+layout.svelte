@@ -17,6 +17,7 @@
 	import { toast } from 'svelte-sonner';
 	import { app, getLoginUser, getUser, logout } from '$lib/firebase';
 	import { type User } from 'firebase/auth';
+	import * as Menubar from '$lib/components/ui/menubar/index.js';
 
 	let user: User | null;
 	$: user;
@@ -28,7 +29,7 @@
 			newSW?.addEventListener('statechange', () => {
 				if (newSW.state == 'installed') {
 					if (confirm('New update available! Reload to update?')) {
-						newSW.postMessage({type: 'SKIP_WAITING'})
+						newSW.postMessage({ type: 'SKIP_WAITING' });
 						window.location.reload();
 					}
 				}
@@ -62,12 +63,24 @@
 
 	onMount(() => {
 		AOS.init();
-		user = getLoginUser()
-		if(user) goto('/paste-link');
-		if(localStorage.getItem('isFirstTime') === 'false'){
-			goto('/paste-link')
-		}else{
-			localStorage.setItem('isFirstTime', 'false')
+		user = getLoginUser();
+		if (user) goto('/paste-link');
+		if (localStorage.getItem('isFirstTime') === 'false') {
+			goto('/paste-link');
+		} else {
+			if (!window.matchMedia('(display-mode: standalone)').matches) {
+				toast.message(`Install our site on your mobile device`, {
+					position: 'top-center',
+					duration: 7000,
+					action: {
+						label: 'Install',
+						onClick: () => {
+							goto('/install');
+						}
+					}
+				});
+			}
+			localStorage.setItem('isFirstTime', 'false');
 		}
 		detectSWUpdate();
 	});
@@ -75,9 +88,20 @@
 
 <nav>
 	<div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between px-4 pt-1">
-		<Button on:click={() => goto('/')} variant="ghost" size="icon">
+		<!-- <Button on:click={() => goto('/')} variant="ghost" size="icon">
 			<Home class="h-5 w-5" />
-		</Button>
+		</Button> -->
+		<Menubar.Root class="border-none">
+			<Menubar.Menu>
+				<Menubar.Trigger>
+					<Home class="h-5 w-5"/>
+				</Menubar.Trigger>
+				<Menubar.Content>
+					<Menubar.Item on:click={() => goto('/')}>Home</Menubar.Item>
+					<Menubar.Item on:click={() => goto('/install')}>Install App</Menubar.Item>
+				</Menubar.Content>
+			</Menubar.Menu>
+		</Menubar.Root>
 		<div class="flex items-center rtl:space-x-reverse">
 			<Button on:click={handleSupport} variant="ghost" size="icon">
 				<MessageCircle class="h-5 w-5" />
