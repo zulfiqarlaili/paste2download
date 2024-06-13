@@ -10,7 +10,7 @@
 	import { version } from '$app/environment';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { page } from '$app/stores';
-	import { Home, MessageCircle } from 'lucide-svelte';
+	import { Home, Headset } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
@@ -94,7 +94,7 @@
 		<Menubar.Root class="border-none">
 			<Menubar.Menu>
 				<Menubar.Trigger>
-					<Home class="h-5 w-5"/>
+					<Home class="h-5 w-5" />
 				</Menubar.Trigger>
 				<Menubar.Content>
 					<Menubar.Item on:click={() => goto('/')}>Home</Menubar.Item>
@@ -104,7 +104,7 @@
 		</Menubar.Root>
 		<div class="flex items-center rtl:space-x-reverse">
 			<Button on:click={handleSupport} variant="ghost" size="icon">
-				<MessageCircle class="h-5 w-5" />
+				<Headset class="h-5 w-5" />
 			</Button>
 			<div>
 				<Button
