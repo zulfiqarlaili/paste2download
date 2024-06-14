@@ -54,6 +54,32 @@ export const getVideoBlob = async (videoUrl: string) => {
 
 	return await response.blob();
 };
+export const getAudioBlob = async (videoUrl: string) => {
+	const endpoint = '/get_audio_blob';
+	const url = new URL(endpoint, BASE_URL);
+	url.searchParams.set('url', videoUrl);
+
+	let response: Response;
+	try {
+		response = await fetch(url.toString(), {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				accept: '*/*'
+			}
+		});
+	} catch (error) {
+		throw new Error(`Failed to fetch audio blob: ${error}`);
+	}
+
+	if (!response.ok) {
+		throw new Error(
+			`Failed to fetch audio info. Status: ${response.status}. ${await response.text()}`
+		);
+	}
+
+	return await response.blob();
+};
 
 export const postVideoToSocialMedia = async (videoUrl: string, text = '') => {
 	const endpoint = '/post_video';

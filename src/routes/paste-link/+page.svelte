@@ -2,8 +2,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import { ClipboardPaste, TwitterIcon } from 'lucide-svelte';
-	import { getVideoBlob, getVideoInfo, postVideoToSocialMedia } from '$lib/api';
+	import { ClipboardPaste, FileMusic, FileVideo, TwitterIcon } from 'lucide-svelte';
+	import { getAudioBlob, getVideoBlob, getVideoInfo, postVideoToSocialMedia } from '$lib/api';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import Loader2 from 'lucide-svelte/icons/loader-2';
@@ -23,7 +23,8 @@
 	let title: string = '';
 	let downloadUrl: string = '';
 	let isLoading: boolean = false;
-	let isDownloadLoading: boolean = false;
+	let isDownloadLoadingVideo: boolean = false;
+	let isDownloadLoadingAudio: boolean = false;
 	let isPostVideoLoading: boolean = false;
 	let isShowThumbnail: boolean = false;
 	let user: User | null;
@@ -90,8 +91,8 @@
 			});
 	};
 
-	const handleDownload = async () => {
-		isDownloadLoading = true;
+	const handleDownloadVideo = async () => {
+		isDownloadLoadingVideo = true;
 		getVideoBlob(link)
 			.then((blob) => {
 				let blobUrl = URL.createObjectURL(blob);
@@ -108,13 +109,41 @@
 				document.body.removeChild(data);
 				URL.revokeObjectURL(blobUrl);
 				toast.success('Video downloaded successfully', { position: 'top-right' });
-				isDownloadLoading = false;
+				isDownloadLoadingVideo = false;
 			})
 			.catch((err) => {
 				toast.error('Failed: ' + err.message, {
 					position: 'top-right'
 				});
-				isDownloadLoading = false;
+				isDownloadLoadingVideo = false;
+			});
+	};
+
+	const handleDownloadAudio = async () => {
+		isDownloadLoadingAudio = true;
+		getAudioBlob(link)
+			.then((blob) => {
+				let blobUrl = URL.createObjectURL(blob);
+
+				const data: HTMLAnchorElement = document.createElement('a');
+				data.href = blobUrl;
+				data.download = `${title}.mp3`;
+				data.style.display = 'none';
+
+				document.body.appendChild(data);
+
+				data.click();
+
+				document.body.removeChild(data);
+				URL.revokeObjectURL(blobUrl);
+				toast.success('Audio downloaded successfully', { position: 'top-right' });
+				isDownloadLoadingAudio = false;
+			})
+			.catch((err) => {
+				toast.error('Failed: ' + err.message, {
+					position: 'top-right'
+				});
+				isDownloadLoadingAudio = false;
 			});
 	};
 
@@ -265,13 +294,27 @@
 			<Button
 				data-umami-event="Download button"
 				class="mx-auto mb-4 w-full max-w-md"
-				disabled={isDownloadLoading}
-				on:click={handleDownload}
+				disabled={isDownloadLoadingVideo}
+				on:click={handleDownloadVideo}
 			>
-				{#if isDownloadLoading}
+				{#if isDownloadLoadingVideo}
 					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 				{:else}
 					<span>Download video</span>
+					<FileVideo class="ml-2 h-5 w-5" />
+				{/if}
+			</Button>
+			<Button
+				data-umami-event="Download audio button"
+				class="mx-auto mb-4 w-full max-w-md"
+				disabled={isDownloadLoadingAudio}
+				on:click={handleDownloadAudio}
+			>
+				{#if isDownloadLoadingAudio}
+					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+				{:else}
+					<span>Download audio</span>
+					<FileMusic class="ml-2 h-5 w-https://www.youtube.com/watch?v=WsZzApFxYm85" />
 				{/if}
 			</Button>
 			{#if user}
