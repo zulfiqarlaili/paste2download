@@ -20,7 +20,6 @@
 	import * as Menubar from '$lib/components/ui/menubar/index.js';
 
 	let user: User | null;
-	let isChatOpen = false;
 	$: user;
 
 	async function detectSWUpdate() {
@@ -39,8 +38,10 @@
 	}
 
 	const handleSupport = () => {
-		isChatOpen = !isChatOpen;
-		(window as any).$chatwoot.toggle(isChatOpen ? 'open' : 'close');
+		let isOpen = (window as any).$chatwoot.isOpen
+		console.log(isOpen);
+		(window as any).$chatwoot.toggle(isOpen ? 'close' : 'open');
+		
 	};
 
 	const handleLogout = () => {
