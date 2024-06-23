@@ -3,7 +3,13 @@
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
 	import { ClipboardPaste, FileMusic, FileVideo, TwitterIcon } from 'lucide-svelte';
-	import { getAudioBlob, getVideoBlob, getVideoInfo, postVideoToSocialMedia } from '$lib/api';
+	import {
+		getAudioBlob,
+		getVideoBlob,
+		getVideoHDBlob,
+		getVideoInfo,
+		postVideoToSocialMedia
+	} from '$lib/api';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import Loader2 from 'lucide-svelte/icons/loader-2';
@@ -24,11 +30,13 @@
 	let downloadUrl: string = '';
 	let isLoading: boolean = false;
 	let isDownloadLoadingVideo: boolean = false;
+	let isDownloadLoadingVideoHD: boolean = false;
 	let isDownloadLoadingAudio: boolean = false;
 	let isPostVideoLoading: boolean = false;
 	let isShowThumbnail: boolean = false;
 	let user: User | null;
 	let caption: string = '';
+	let video_id: string = '';
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S+/;
@@ -79,6 +87,7 @@
 				thumbNail = res.thumbnail;
 				title = res.title;
 				downloadUrl = res.download_url;
+				video_id = res.id;
 				isShowThumbnail = (await fetch(res.download_url)).status !== 200;
 			})
 			.catch((err) => {
@@ -116,6 +125,33 @@
 					position: 'top-right'
 				});
 				isDownloadLoadingVideo = false;
+			});
+	};
+	const handleDownloadHDVideo = async () => {
+		isDownloadLoadingVideoHD = true;
+		getVideoHDBlob(video_id)
+			.then((blob) => {
+				let blobUrl = URL.createObjectURL(blob);
+
+				const data: HTMLAnchorElement = document.createElement('a');
+				data.href = blobUrl;
+				data.download = `${title}.mp4`;
+				data.style.display = 'none';
+
+				document.body.appendChild(data);
+
+				data.click();
+
+				document.body.removeChild(data);
+				URL.revokeObjectURL(blobUrl);
+				toast.success('Video downloaded successfully', { position: 'top-right' });
+				isDownloadLoadingVideoHD = false;
+			})
+			.catch((err) => {
+				toast.error('Failed: ' + err.message, {
+					position: 'top-right'
+				});
+				isDownloadLoadingVideoHD = false;
 			});
 	};
 
@@ -279,7 +315,7 @@
 			<p class="mx-auto mb-6 mt-4 max-w-md text-center text-2xl font-medium">{title}</p>
 			{#if isShowThumbnail}
 				<img
-					class="mb-6 rounded-lg shadow-md"
+					class="mb-6 rounded-lg shadow-md mx-auto"
 					src={thumbNail}
 					alt={title}
 					on:error={() => {
@@ -304,6 +340,21 @@
 					<FileVideo class="ml-2 h-5 w-5" />
 				{/if}
 			</Button>
+			{#if video_id}
+				<Button
+					data-umami-event="Download HD button"
+					class="mx-auto mb-4 w-full max-w-md"
+					disabled={isDownloadLoadingVideoHD}
+					on:click={handleDownloadHDVideo}
+				>
+					{#if isDownloadLoadingVideoHD}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+					{:else}
+						<span>Download HD video</span>
+						<FileVideo class="ml-2 h-5 w-5" />
+					{/if}
+				</Button>
+			{/if}
 			<Button
 				data-umami-event="Download audio button"
 				class="mx-auto mb-4 w-full max-w-md"
@@ -314,7 +365,7 @@
 					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 				{:else}
 					<span>Download audio</span>
-					<FileMusic class="ml-2 h-5 w-https://www.youtube.com/watch?v=WsZzApFxYm85" />
+					<FileMusic class="ml-2 h-5 w-5" />
 				{/if}
 			</Button>
 			{#if user}
