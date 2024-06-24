@@ -29,9 +29,9 @@
 	let title: string = '';
 	let downloadUrl: string = '';
 	let isLoading: boolean = false;
-	let isDownloadLoadingVideo: boolean = false;
-	let isDownloadLoadingVideoHD: boolean = false;
-	let isDownloadLoadingAudio: boolean = false;
+	let isLoadingVideo: boolean = false;
+	let isLoadingVideoHD: boolean = false;
+	let isLoadingAudio: boolean = false;
 	let isPostVideoLoading: boolean = false;
 	let isShowThumbnail: boolean = false;
 	let user: User | null;
@@ -100,87 +100,47 @@
 			});
 	};
 
-	const handleDownloadVideo = async () => {
-		isDownloadLoadingVideo = true;
-		getVideoBlob(link)
-			.then((blob) => {
-				let blobUrl = URL.createObjectURL(blob);
+	const handleDownloadMedia = async (format: 'video' | 'audio' | 'videoHD') => {
+		const downloadName =
+			format === 'video' ? `${title}.mp4` : format === 'audio' ? `${title}.mp3` : `${title}.mp4`;
 
-				const data: HTMLAnchorElement = document.createElement('a');
-				data.href = blobUrl;
-				data.download = `${title}.mp4`;
-				data.style.display = 'none';
+		handleLoadingButton(format, true);
+		try {
+			const blob =
+				format === 'video'
+					? await getVideoBlob(link)
+					: format === 'audio'
+						? await getAudioBlob(link)
+						: await getVideoHDBlob(video_id);
+			const blobUrl = URL.createObjectURL(blob);
 
-				document.body.appendChild(data);
+			const data: HTMLAnchorElement = document.createElement('a');
+			data.href = blobUrl;
+			data.download = downloadName;
+			data.style.display = 'none';
 
-				data.click();
+			document.body.appendChild(data);
 
-				document.body.removeChild(data);
-				URL.revokeObjectURL(blobUrl);
-				toast.success('Video downloaded successfully', { position: 'top-right' });
-				isDownloadLoadingVideo = false;
-			})
-			.catch((err) => {
-				toast.error('Failed: ' + err.message, {
-					position: 'top-right'
-				});
-				isDownloadLoadingVideo = false;
-			});
-	};
-	const handleDownloadHDVideo = async () => {
-		isDownloadLoadingVideoHD = true;
-		getVideoHDBlob(video_id)
-			.then((blob) => {
-				let blobUrl = URL.createObjectURL(blob);
+			data.click();
 
-				const data: HTMLAnchorElement = document.createElement('a');
-				data.href = blobUrl;
-				data.download = `${title}.mp4`;
-				data.style.display = 'none';
-
-				document.body.appendChild(data);
-
-				data.click();
-
-				document.body.removeChild(data);
-				URL.revokeObjectURL(blobUrl);
-				toast.success('Video downloaded successfully', { position: 'top-right' });
-				isDownloadLoadingVideoHD = false;
-			})
-			.catch((err) => {
-				toast.error('Failed: ' + err.message, {
-					position: 'top-right'
-				});
-				isDownloadLoadingVideoHD = false;
-			});
+			document.body.removeChild(data);
+			URL.revokeObjectURL(blobUrl);
+			toast.success(`Downloaded successfully`, { position: 'top-right' });
+			handleLoadingButton(format, false);
+		} catch (err) {
+			toast.error('Failed: ' + (err as Error).message, { position: 'top-right' });
+			handleLoadingButton(format, false);
+		}
 	};
 
-	const handleDownloadAudio = async () => {
-		isDownloadLoadingAudio = true;
-		getAudioBlob(link)
-			.then((blob) => {
-				let blobUrl = URL.createObjectURL(blob);
-
-				const data: HTMLAnchorElement = document.createElement('a');
-				data.href = blobUrl;
-				data.download = `${title}.mp3`;
-				data.style.display = 'none';
-
-				document.body.appendChild(data);
-
-				data.click();
-
-				document.body.removeChild(data);
-				URL.revokeObjectURL(blobUrl);
-				toast.success('Audio downloaded successfully', { position: 'top-right' });
-				isDownloadLoadingAudio = false;
-			})
-			.catch((err) => {
-				toast.error('Failed: ' + err.message, {
-					position: 'top-right'
-				});
-				isDownloadLoadingAudio = false;
-			});
+	const handleLoadingButton = (format: string, isLoading: boolean) => {
+		if (format === 'video') {
+			isLoadingVideo = isLoading;
+		} else if (format === 'audio') {
+			isLoadingAudio = isLoading;
+		} else if (format === 'videoHD') {
+			isLoadingVideoHD = isLoading;
+		}
 	};
 
 	const handleSocialLogin = async () => {
@@ -315,7 +275,7 @@
 			<p class="mx-auto mb-6 mt-4 max-w-md text-center text-2xl font-medium">{title}</p>
 			{#if isShowThumbnail}
 				<img
-					class="mb-6 rounded-lg shadow-md mx-auto"
+					class="mx-auto mb-6 rounded-lg shadow-md"
 					src={thumbNail}
 					alt={title}
 					on:error={() => {
@@ -330,10 +290,10 @@
 			<Button
 				data-umami-event="Download button"
 				class="mx-auto mb-4 w-full max-w-md"
-				disabled={isDownloadLoadingVideo}
-				on:click={handleDownloadVideo}
+				disabled={isLoadingVideo}
+				on:click={() => handleDownloadMedia('video')}
 			>
-				{#if isDownloadLoadingVideo}
+				{#if isLoadingVideo}
 					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 				{:else}
 					<span>Download video</span>
@@ -344,10 +304,10 @@
 				<Button
 					data-umami-event="Download HD button"
 					class="mx-auto mb-4 w-full max-w-md"
-					disabled={isDownloadLoadingVideoHD}
-					on:click={handleDownloadHDVideo}
+					disabled={isLoadingVideoHD}
+					on:click={() => handleDownloadMedia('videoHD')}
 				>
-					{#if isDownloadLoadingVideoHD}
+					{#if isLoadingVideoHD}
 						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 					{:else}
 						<span>Download HD video</span>
@@ -358,10 +318,10 @@
 			<Button
 				data-umami-event="Download audio button"
 				class="mx-auto mb-4 w-full max-w-md"
-				disabled={isDownloadLoadingAudio}
-				on:click={handleDownloadAudio}
+				disabled={isLoadingAudio}
+				on:click={() => handleDownloadMedia('audio')}
 			>
-				{#if isDownloadLoadingAudio}
+				{#if isLoadingAudio}
 					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 				{:else}
 					<span>Download audio</span>
