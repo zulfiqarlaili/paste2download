@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import { ClipboardPaste, FileMusic, FileVideo, TwitterIcon } from 'lucide-svelte';
+	import { ClipboardPaste, Divide, Music, Video } from 'lucide-svelte';
 	import {
 		getAudioBlob,
 		getVideoBlob,
@@ -21,6 +21,7 @@
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import { mediaQuery } from 'svelte-legos';
 	import { Textarea } from '$lib/components/ui/textarea';
+	import { text } from '@sveltejs/kit';
 
 	const isDesktop = mediaQuery('(min-width: 768px)');
 	let open = false;
@@ -297,7 +298,7 @@
 					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 				{:else}
 					<span>Download video</span>
-					<FileVideo class="ml-2 h-5 w-5" />
+					<Video class="ml-2 h-5 w-5" />
 				{/if}
 			</Button>
 			{#if video_id}
@@ -311,10 +312,11 @@
 						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 					{:else}
 						<span>Download HD video</span>
-						<FileVideo class="ml-2 h-5 w-5" />
+						<Video class="ml-2 h-5 w-5" />
 					{/if}
 				</Button>
 			{/if}
+			<Separator class="mb-3"/>
 			<Button
 				data-umami-event="Download audio button"
 				class="mx-auto mb-4 w-full max-w-md"
@@ -325,7 +327,7 @@
 					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 				{:else}
 					<span>Download audio</span>
-					<FileMusic class="ml-2 h-5 w-5" />
+					<Music class="ml-2 h-5 w-5" />
 				{/if}
 			</Button>
 			{#if user}
