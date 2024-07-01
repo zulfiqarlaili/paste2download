@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
-	import { ClipboardPaste, Divide, Music, Video } from 'lucide-svelte';
+	import { ClipboardPaste, Music, Video } from 'lucide-svelte';
 	import {
 		getAudioBlob,
 		getVideoBlob,
@@ -21,10 +21,11 @@
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import { mediaQuery } from 'svelte-legos';
 	import { Textarea } from '$lib/components/ui/textarea';
-	import { text } from '@sveltejs/kit';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 
 	const isDesktop = mediaQuery('(min-width: 768px)');
 	let open = false;
+	let infoDialog = false;
 	let link: string = '';
 	let thumbNail: string = '';
 	let title: string = '';
@@ -33,7 +34,6 @@
 	let isLoadingVideo: boolean = false;
 	let isLoadingVideoHD: boolean = false;
 	let isLoadingAudio: boolean = false;
-	let isPostVideoLoading: boolean = false;
 	let isShowThumbnail: boolean = false;
 	let user: User | null;
 	let caption: string = '';
@@ -159,28 +159,22 @@
 	};
 
 	const handlePostSocialMedia = async () => {
-		isPostVideoLoading = true;
-		toast.info(
-			`Video processing initiated. Duration may vary. Our server will handle it. You safely can close this page.`,
-			{
-				position: 'top-right',
-				duration: 7000
-			}
-		);
+		open = false;
+		thumbNail = '';
+		infoDialog = true;
+		setTimeout(() => (infoDialog = false), 5000);
 		postVideoToSocialMedia(link, caption)
 			.then(() => {
-				isPostVideoLoading = false;
-				caption = '';
-				toast.success('Posted successfully!', {
+				toast.success('Your video has been successfully posted on social media!', {
 					position: 'top-right'
 				});
-				open = false;
 			})
 			.catch((error) => {
-				isPostVideoLoading = false;
 				toast.error('Failed: ' + error.message, {
 					position: 'top-right'
 				});
+			}).finally(() => {
+				caption = '';
 			});
 	};
 
@@ -316,7 +310,7 @@
 					{/if}
 				</Button>
 			{/if}
-			<Separator class="mb-3"/>
+			<Separator class="mb-3" />
 			<Button
 				data-umami-event="Download audio button"
 				class="mx-auto mb-4 w-full max-w-md"
@@ -337,7 +331,6 @@
 							<Button
 								variant="secondary"
 								class="mx-auto mb-4 w-full max-w-md"
-								disabled={isPostVideoLoading}
 								builders={[builder]}
 							>
 								<span>Post to X</span>
@@ -362,15 +355,11 @@
 								<Button
 									data-umami-event="Social post button"
 									type="submit"
-									disabled={caption ? caption.length > 280 : false || isPostVideoLoading}
+									disabled={caption ? caption.length > 280 : false}
 									on:click={handlePostSocialMedia}
 								>
-									{#if isPostVideoLoading}
-										<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-									{:else}
-										<span>Post</span>
-									{/if}</Button
-								>
+									<span>Post</span>
+								</Button>
 								<Button variant="outline" on:click={() => (open = false)}>Cancel</Button>
 							</form>
 						</Dialog.Content>
@@ -378,12 +367,7 @@
 				{:else}
 					<Drawer.Root bind:open>
 						<Drawer.Trigger asChild let:builder>
-							<Button
-								variant="secondary"
-								class="mx-auto mb-4 w-full max-w-md"
-								disabled={isPostVideoLoading}
-								builders={[builder]}
-							>
+							<Button variant="secondary" class="mx-auto mb-4 w-full max-w-md" builders={[builder]}>
 								<span>Post</span>
 							</Button>
 						</Drawer.Trigger>
@@ -406,15 +390,11 @@
 								<Button
 									data-umami-event="Social post button"
 									type="submit"
-									disabled={caption ? caption.length > 280 : false || isPostVideoLoading}
+									disabled={caption ? caption.length > 280 : false}
 									on:click={handlePostSocialMedia}
 								>
-									{#if isPostVideoLoading}
-										<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-									{:else}
-										<span>Post</span>
-									{/if}</Button
-								>
+									<span>Post</span>
+								</Button>
 							</form>
 							<Drawer.Footer class="pt-2">
 								<Drawer.Close asChild let:builder>
@@ -449,4 +429,18 @@
 			{/if}
 		</div>
 	{/if}
+	<AlertDialog.Root bind:open={infoDialog}>
+		<AlertDialog.Content>
+			<AlertDialog.Header>
+				<AlertDialog.Title>Your video is being processed</AlertDialog.Title>
+				<AlertDialog.Description>
+					Don't worry, we've got you covered. You can continue using our website while we handle the
+					video processing in the background.
+				</AlertDialog.Description>
+			</AlertDialog.Header>
+			<AlertDialog.Footer>
+				<AlertDialog.Action>OK</AlertDialog.Action>
+			</AlertDialog.Footer>
+		</AlertDialog.Content>
+	</AlertDialog.Root>
 </div>
