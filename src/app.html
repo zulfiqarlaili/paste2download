@@ -1,62 +1,67 @@
 <!doctype html>
 <html lang="en" prefix="og: https://ogp.me/ns#">
-	<head>
-		<title>Paste2Download - Download videos effortlessly</title>
-		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<meta name="description" content="Download videos from your favourite platforms with ease. Haste no hassle." />
-		<meta name="keywords" content="video download, video downloader, paste download" />
-		<meta name="author" content="Zulfiqar Laili" />
-		<meta name="theme-color" content="#666" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<!-- Open Graph / Facebook -->
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://paste2download.com" />
-		<meta property="og:title" content="Paste2Download - Download videos effortlessly" />
-		<meta property="og:description" content="Download videos from your favourite platforms with ease. Haste no hassle." />
-		<meta property="og:image" content="%sveltekit.assets%/img/og.png" />
+<head>
+	<title>Paste2Download - Download videos effortlessly</title>
+	<meta charset="utf-8" />
+	<link rel="icon" href="%sveltekit.assets%/favicon.png" />
+	<meta name="description" content="Download videos from your favourite platforms with ease. Haste no hassle." />
+	<meta name="keywords" content="video download, video downloader, paste download" />
+	<meta name="author" content="Zulfiqar Laili" />
+	<meta name="theme-color" content="#666" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<!-- Twitter -->
-		<meta property="twitter:card" content="summary_large_image" />
-		<meta property="twitter:url" content="https://paste2download.com" />
-		<meta property="twitter:title" content="Paste2Download - Download videos effortlessly" />
-		<meta property="twitter:description" content="Download videos from your favourite platforms with ease. Haste no hassle." />
-		<meta property="twitter:image" content="%sveltekit.assets%/img/og.png" />
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://paste2download.com" />
+	<meta property="og:title" content="Paste2Download - Download videos effortlessly" />
+	<meta property="og:description"
+		content="Download videos from your favourite platforms with ease. Haste no hassle." />
+	<meta property="og:image" content="%sveltekit.assets%/img/og.png" />
 
-		<!-- PWA -->
-		<link rel="manifest" href="%sveltekit.assets%/manifest.json"/>
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:url" content="https://paste2download.com" />
+	<meta property="twitter:title" content="Paste2Download - Download videos effortlessly" />
+	<meta property="twitter:description"
+		content="Download videos from your favourite platforms with ease. Haste no hassle." />
+	<meta property="twitter:image" content="%sveltekit.assets%/img/og.png" />
 
-		<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-		<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-		<script
-			async
-			src="https://umami.07102020.xyz/script.js"
-			data-website-id="0e097494-bf0f-4aa8-b506-abe99f455cff"
-			data-domains="paste2download.com,www.paste2download.com"
-		></script>
-		<script>
-			window.chatwootSettings = { hideMessageBubble: 'false', type: 'expanded_bubble' };
-			(function (d, t) {
-				var BASE_URL = 'https://chatwoot.07102020.xyz';
-				var g = d.createElement(t),
-					s = d.getElementsByTagName(t)[0];
-				g.src = BASE_URL + '/packs/js/sdk.js';
-				g.defer = true;
-				g.async = true;
-				s.parentNode.insertBefore(g, s);
-				g.onload = function () {
-					window.chatwootSDK.run({
-						websiteToken: 'PqWgKZvN4Wtzn51KdbQDZQgj',
-						baseUrl: BASE_URL
-					});
-				};
-			})(document, 'script');
-		</script>
-		%sveltekit.head%
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">%sveltekit.body%</div>
-	</body>
+	<!-- PWA -->
+	<link rel="manifest" href="%sveltekit.assets%/manifest.json" />
+
+	<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+	<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+	<script async src="https://umami.07102020.xyz/script.js" data-website-id="0e097494-bf0f-4aa8-b506-abe99f455cff"
+		data-domains="paste2download.com,www.paste2download.com"></script>
+	<script>
+		window.chatwootSettings = {
+			hideMessageBubble: false,
+			showUnreadMessagesDialog: true,
+			darkMode: "auto",
+			type: "standard",
+		};
+		(function (d, t) {
+			var BASE_URL = 'https://chatwoot.07102020.xyz';
+			var g = d.createElement(t),
+				s = d.getElementsByTagName(t)[0];
+			g.src = BASE_URL + '/packs/js/sdk.js';
+			g.defer = true;
+			g.async = true;
+			s.parentNode.insertBefore(g, s);
+			g.onload = function () {
+				window.chatwootSDK.run({
+					websiteToken: 'PqWgKZvN4Wtzn51KdbQDZQgj',
+					baseUrl: BASE_URL
+				});
+			};
+		})(document, 'script');
+	</script>
+	%sveltekit.head%
+</head>
+
+<body data-sveltekit-preload-data="hover">
+	<div style="display: contents">%sveltekit.body%</div>
+</body>
+
 </html>
-
