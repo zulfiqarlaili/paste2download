@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Flame, Hammer, Images, Lightbulb, UserX } from 'lucide-svelte';
-	import heroLogo from '$lib/assets/hero.png?enhanced';
+	import hereVideo from '$lib/assets/hero.mp4';
 	import { urlHero } from '$lib/store';
 	import { goto } from '$app/navigation';
 	import { Separator } from '$lib/components/ui/separator';
@@ -22,7 +22,7 @@
 				loop
 				playsinline
 				style="pointer-events: none"
-				src="https://joelpublicbucket.s3.ap-southeast-1.amazonaws.com/screenrun-03-17-2024-23-06-21.mp4"
+				src={hereVideo}
 			>
 				<track kind="captions" />
 			</video>
