@@ -3,9 +3,11 @@
 </script>
 
 <div class="mx-auto max-w-3xl p-6">
-	<h1 class="mb-6 text-center text-3xl font-bold">How to Install Our App on Your Phone</h1>
+	<h1 data-aos="zoom-in" class="mb-6 text-center text-3xl font-bold">
+		How to Install Our App on Your Phone
+	</h1>
 	<Separator class="my-4" />
-	<section class="mb-8">
+	<section data-aos="fade-up" data-aos-delay="100" class="section-android mb-8">
 		<h2 class="mb-4 text-2xl font-semibold">For Android Users:</h2>
 		<ol class="list-inside list-decimal space-y-4">
 			<li class="mb-4">
@@ -20,9 +22,7 @@
 			</li>
 			<li class="mb-4">
 				<strong>Confirm Installation:</strong>
-				<p class="mb-4">
-					Tap "Add" or "Install" in the dialog that appears.
-				</p>
+				<p class="mb-4">Tap "Add" or "Install" in the dialog that appears.</p>
 			</li>
 			<li class="mb-4">
 				<strong>Find and Use the App:</strong>
@@ -33,7 +33,7 @@
 		</ol>
 	</section>
 
-	<section>
+	<section data-aos="fade-up" data-aos-delay="200" class="section-ios my-4">
 		<h2 class="mb-4 text-2xl font-semibold">For iOS Users:</h2>
 		<ol class="list-inside list-decimal space-y-4">
 			<li class="mb-4">
@@ -41,15 +41,11 @@
 				<p class="mb-4">
 					Tap the Share icon at the bottom of the screen (a square with an arrow pointing up).
 				</p>
-				<p class="mb-4">
-					Scroll down and tap "Add to Home Screen."
-				</p>
+				<p class="mb-4">Scroll down and tap "Add to Home Screen."</p>
 			</li>
 			<li class="mb-4">
 				<strong>Confirm Installation:</strong>
-				<p class="mb-4">
-					Tap "Add" in the top-right corner of the screen.
-				</p>
+				<p class="mb-4">Tap "Add" in the top-right corner of the screen.</p>
 			</li>
 			<li class="mb-4">
 				<strong>Find and Use the App:</strong>
@@ -60,4 +56,3 @@
 		</ol>
 	</section>
 </div>
-
