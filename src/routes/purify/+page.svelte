@@ -95,8 +95,10 @@
 </script>
 
 <section class="purify-section flex flex-col items-center justify-center px-4 pt-16 text-center">
-	<h1 class="mb-4 text-3xl font-bold">Purify Your TikTok Links</h1>
-	<p class="max-w-xl text-gray-500 dark:text-gray-400">
+	<h1 data-aos="fade-up" data-aos-delay="100" class="mb-4 text-3xl font-bold">
+		Purify Your TikTok Links
+	</h1>
+	<p data-aos="fade-up" data-aos-delay="100" class="max-w-xl text-gray-500 dark:text-gray-400">
 		Remove extra data from your TikTok links and share videos without revealing your <strong
 			>personal info</strong
 		>. Just <strong>paste your link</strong>, and get a <strong>clean, privacy-safe</strong> version
@@ -104,6 +106,8 @@
 	</p>
 
 	<form
+    data-aos="fade-up"
+    data-aos-delay="200"
 		class="mt-16 flex w-full max-w-sm items-center space-x-2"
 		on:submit|preventDefault={handleSubmit}
 	>
