@@ -8,8 +8,8 @@
 	let link: string = '';
 	let purifyedLink: string = '';
 	let isLoading: boolean = false;
-  let copyButtonVariant: 'outline' | 'secondary' = 'outline';
-  let copyButtonText: string = 'Copy link';
+	let copyButtonVariant: 'outline' | 'secondary' = 'outline';
+	let copyButtonText: string = 'Copy link';
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S*tiktok\S*/;
@@ -52,8 +52,8 @@
 		});
 		try {
 			await navigator.clipboard.writeText(purifyedLink);
-      copyButtonVariant = 'secondary';
-      copyButtonText = 'Copied!';
+			copyButtonVariant = 'secondary';
+			copyButtonText = 'Copied!';
 		} catch (err: any) {
 			if (err.name === 'NotAllowedError') {
 				toast.error('Clipboard access denied', {
@@ -74,7 +74,7 @@
 		toast.loading('Grabbing original link', {
 			description: 'Please wait',
 			position: 'top-right',
-      duration: 2000
+			duration: 2000
 		});
 		isLoading = true;
 		getVideoInfo(link)
@@ -82,7 +82,6 @@
 				link = '';
 				isLoading = false;
 				purifyedLink = res.original_url;
-
 			})
 			.catch((err) => {
 				isLoading = false;
@@ -119,7 +118,12 @@
 			/>
 		{/if}
 		{#if isValidLink(link)}
-			<Button disabled={isLoading} on:click={handleSubmit} type="submit">
+			<Button
+				data-umami-event="Purify button"
+				disabled={isLoading}
+				on:click={handleSubmit}
+				type="submit"
+			>
 				{#if isLoading}
 					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 				{:else}
@@ -127,9 +131,18 @@
 				{/if}
 			</Button>
 		{:else if purifyedLink}
-			<Button variant={copyButtonVariant} disabled={isLoading} on:click={copyToClipboard}>{copyButtonText}</Button>
+			<Button
+				data-umami-event="Purify copy button"
+				variant={copyButtonVariant}
+				disabled={isLoading}
+				on:click={copyToClipboard}>{copyButtonText}</Button
+			>
 		{:else}
-			<Button bind:value={link} variant="secondary" on:click={pasteFromClipboard}>Paste link</Button
+			<Button
+				data-umami-event="Purify paste button"
+				bind:value={link}
+				variant="secondary"
+				on:click={pasteFromClipboard}>Paste link</Button
 			>
 		{/if}
 	</form>
