@@ -41,7 +41,6 @@
 		let isOpen = (window as any).$chatwoot.isOpen
 		console.log(isOpen);
 		(window as any).$chatwoot.toggle(isOpen ? 'close' : 'open');
-		
 	};
 
 	const handleLogout = () => {
@@ -69,7 +68,7 @@
 		user = getLoginUser();
 		if (user) goto('/paste-link');
 		if (localStorage.getItem('isFirstTime') === 'false') {
-			goto('/paste-link');
+			//goto('/paste-link');
 		} else {
 			if (!window.matchMedia('(display-mode: standalone)').matches) {
 				toast.message(`Install our site on your mobile device`, {
