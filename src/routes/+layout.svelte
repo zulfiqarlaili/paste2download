@@ -101,6 +101,7 @@
 				</Menubar.Trigger>
 				<Menubar.Content>
 					<Menubar.Item on:click={() => goto('/')}>Home</Menubar.Item>
+					<Menubar.Item on:click={() => goto('/purify')}>Purify</Menubar.Item>
 					<Menubar.Item on:click={() => goto('/install')}>Install App</Menubar.Item>
 				</Menubar.Content>
 			</Menubar.Menu>
