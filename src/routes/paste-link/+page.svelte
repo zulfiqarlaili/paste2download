@@ -173,9 +173,17 @@
 				toast.error('Failed: ' + error.message, {
 					position: 'top-right'
 				});
-			}).finally(() => {
+			})
+			.finally(() => {
 				caption = '';
 			});
+	};
+
+	const handleKeyPress = () => {
+		const anchor = document.getElementById('bottom-anchor');
+		if (anchor) {
+			anchor.scrollIntoView({ behavior: 'smooth' });
+		}
 	};
 
 	getUser((data) => {
@@ -328,11 +336,7 @@
 				{#if $isDesktop}
 					<Dialog.Root bind:open>
 						<Dialog.Trigger asChild let:builder>
-							<Button
-								variant="secondary"
-								class="mx-auto mb-4 w-full max-w-md"
-								builders={[builder]}
-							>
+							<Button variant="secondary" class="mx-auto mb-4 w-full max-w-md" builders={[builder]}>
 								<span>Post to X</span>
 							</Button>
 						</Dialog.Trigger>
@@ -378,6 +382,7 @@
 									placeholder="Video caption is optional..."
 									class="resize-none"
 									data-characters-left={Math.max(0, 280 - (caption ? caption.length : 0))}
+                  on:keydown={handleKeyPress}
 								/>
 								<p
 									class={`text-right text-sm text-gray-500 dark:text-gray-400 ${caption && caption.length > 280 ? 'text-red-500' : ''} ${caption && caption.length > 280 ? 'dark:text-red-500' : ''}`}
@@ -403,6 +408,7 @@
 							</Drawer.Footer>
 						</Drawer.Content>
 					</Drawer.Root>
+					<div id="bottom-anchor" />
 				{/if}
 			{:else}
 				<Dialog.Root>
