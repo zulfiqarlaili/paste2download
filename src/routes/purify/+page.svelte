@@ -6,6 +6,7 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { getVideoInfo } from '$lib/api';
+	import { onMount } from 'svelte';
 
 	let link: string = '';
 	let purifiedLink: string = '';
@@ -15,7 +16,6 @@
 	let directLink: boolean = false;
 
 	$: link, sanitizeLink();
-	$: directLink, directLinkHandler();
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S*tiktok\S*/;
@@ -78,7 +78,9 @@
 		link = link.replace('Enjoy this post in TikTok:', '').trim();
 	};
 
-	const directLinkHandler = () => {};
+	const handleLocalStorage = () => {
+		localStorage.setItem('directLink', JSON.stringify(!directLink));
+	};
 
 	const handleSubmit = () => {
 		if (!handleLinkValidation()) return;
@@ -107,6 +109,16 @@
 				isLoading = false;
 			});
 	};
+
+	onMount(() => {
+		const savedDirectLink = localStorage.getItem('directLink');
+		console.log(savedDirectLink);
+		if (savedDirectLink) {
+			directLink = JSON.parse(savedDirectLink);
+		} else {
+			localStorage.setItem('directLink', JSON.stringify(directLink));
+		}
+	});
 </script>
 
 <section class="purify-section flex flex-col items-center justify-center px-4 pt-16 text-center">
@@ -179,7 +191,7 @@
 					Open link directly after purify
 				</Label>
 			</div>
-			<Switch id="direct-link" bind:checked={directLink} />
+			<Switch id="direct-link" bind:checked={directLink} on:click={handleLocalStorage} />
 		</div>
 	</form>
 </section>
