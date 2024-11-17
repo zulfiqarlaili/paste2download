@@ -3,6 +3,8 @@
 	import { Input } from '$lib/components/ui/input';
 	import { toast } from 'svelte-sonner';
 	import Loader2 from 'lucide-svelte/icons/loader-2';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { getVideoInfo } from '$lib/api';
 
 	let link: string = '';
@@ -10,6 +12,10 @@
 	let isLoading: boolean = false;
 	let copyButtonVariant: 'outline' | 'secondary' = 'outline';
 	let copyButtonText: string = 'Copy link';
+	let directLink: boolean = false;
+
+	$: link, sanitizeLink();
+	$: directLink, directLinkHandler();
 
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S*tiktok\S*/;
@@ -51,9 +57,13 @@
 			position: 'top-right'
 		});
 		try {
-			await navigator.clipboard.writeText(purifyedLink);
-			copyButtonVariant = 'secondary';
-			copyButtonText = 'Copied!';
+			if (directLink) {
+				window.open(purifyedLink, '_blank', 'noopener,noreferrer');
+			} else {
+				await navigator.clipboard.writeText(purifyedLink);
+				copyButtonVariant = 'secondary';
+				copyButtonText = 'Copied!';
+			}
 		} catch (err: any) {
 			if (err.name === 'NotAllowedError') {
 				toast.error('Clipboard access denied', {
@@ -65,6 +75,20 @@
 					position: 'top-right'
 				});
 			}
+		}
+	};
+
+	const sanitizeLink = () => {
+		link = link.replace('Enjoy this post in TikTok:', '').trim();
+	};
+
+	const directLinkHandler = () => {
+		if (directLink) {
+			copyButtonVariant = 'outline';
+			copyButtonText = 'Open link';
+		} else {
+			copyButtonVariant = 'outline';
+			copyButtonText = 'Copy link';
 		}
 	};
 
@@ -106,15 +130,16 @@
 	</p>
 
 	<form
-    data-aos="fade-up"
-    data-aos-delay="200"
-		class="mt-16 flex w-full max-w-sm items-center space-x-2"
+		data-aos="fade-up"
+		data-aos-delay="200"
+		class="mt-16 flex w-full max-w-sm flex-col items-center"
 		on:submit|preventDefault={handleSubmit}
 	>
 		{#if purifyedLink}
-			<Input bind:value={purifyedLink} type="text" disabled />
+			<Input class="my-2" bind:value={purifyedLink} type="text" disabled />
 		{:else}
 			<Input
+				class="my-2"
 				bind:value={link}
 				type="text"
 				placeholder="Enter TikTok link to purify"
@@ -123,6 +148,7 @@
 		{/if}
 		{#if isValidLink(link)}
 			<Button
+				class="mx-auto my-2 w-full"
 				data-umami-event="Purify button"
 				disabled={isLoading}
 				on:click={handleSubmit}
@@ -136,6 +162,7 @@
 			</Button>
 		{:else if purifyedLink}
 			<Button
+				class="mx-auto my-2 w-full"
 				data-umami-event="Purify copy button"
 				variant={copyButtonVariant}
 				disabled={isLoading}
@@ -143,11 +170,16 @@
 			>
 		{:else}
 			<Button
+				class="mx-auto my-2 w-full"
 				data-umami-event="Purify paste button"
 				bind:value={link}
 				variant="secondary"
 				on:click={pasteFromClipboard}>Paste link</Button
 			>
 		{/if}
+		<div data-aos="fade-up" data-aos-delay="250" class="flex space-x-2">
+			<Label for="direct-link">Open link directly</Label>
+			<Switch id="direct-link" bind:checked={directLink} />
+		</div>
 	</form>
 </section>
