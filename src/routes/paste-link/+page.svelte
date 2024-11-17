@@ -39,6 +39,8 @@
 	let caption: string = '';
 	let video_id: string = '';
 
+  $: link, sanitizeLink();
+
 	const isValidLink = (link: string): boolean => {
 		const linkRegex = /https?:\/\/\S+/;
 		return linkRegex.test(link);
@@ -71,6 +73,10 @@
 			});
 		}
 	};
+
+  const sanitizeLink = () => {
+    link = link.replace('Enjoy this post in TikTok:', '').trim();
+  };
 
 	const handleSubmit = () => {
 		toast.loading('Getting video info...', {
