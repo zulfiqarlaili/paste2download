@@ -8,7 +8,7 @@
 	import { getVideoInfo } from '$lib/api';
 
 	let link: string = '';
-	let purifyedLink: string = '';
+	let purifiedLink: string = '';
 	let isLoading: boolean = false;
 	let copyButtonVariant: 'outline' | 'secondary' = 'outline';
 	let copyButtonText: string = 'Copy link';
@@ -57,13 +57,9 @@
 			position: 'top-right'
 		});
 		try {
-			if (directLink) {
-				window.open(purifyedLink, '_blank', 'noopener,noreferrer');
-			} else {
-				await navigator.clipboard.writeText(purifyedLink);
-				copyButtonVariant = 'secondary';
-				copyButtonText = 'Copied!';
-			}
+			await navigator.clipboard.writeText(purifiedLink);
+			copyButtonVariant = 'secondary';
+			copyButtonText = 'Copied!';
 		} catch (err: any) {
 			if (err.name === 'NotAllowedError') {
 				toast.error('Clipboard access denied', {
@@ -82,15 +78,7 @@
 		link = link.replace('Enjoy this post in TikTok:', '').trim();
 	};
 
-	const directLinkHandler = () => {
-		if (directLink) {
-			copyButtonVariant = 'outline';
-			copyButtonText = 'Open link';
-		} else {
-			copyButtonVariant = 'outline';
-			copyButtonText = 'Copy link';
-		}
-	};
+	const directLinkHandler = () => {};
 
 	const handleSubmit = () => {
 		if (!handleLinkValidation()) return;
@@ -105,7 +93,10 @@
 			.then(async (res: any) => {
 				link = '';
 				isLoading = false;
-				purifyedLink = res.original_url;
+				purifiedLink = res.original_url;
+				if (directLink) {
+					window.open(purifiedLink, '_blank', 'noopener,noreferrer');
+				}
 			})
 			.catch((err) => {
 				isLoading = false;
@@ -135,15 +126,15 @@
 		class="mt-16 flex w-full max-w-sm flex-col items-center"
 		on:submit|preventDefault={handleSubmit}
 	>
-		{#if purifyedLink}
-			<Input class="my-2" bind:value={purifyedLink} type="text" disabled />
+		{#if purifiedLink}
+			<Input class="my-2" bind:value={purifiedLink} type="text" disabled />
 		{:else}
 			<Input
 				class="my-2"
 				bind:value={link}
 				type="text"
 				placeholder="Enter TikTok link to purify"
-				disabled={!!purifyedLink}
+				disabled={!!purifiedLink}
 			/>
 		{/if}
 		{#if isValidLink(link)}
@@ -160,7 +151,7 @@
 					<span>Purify</span>
 				{/if}
 			</Button>
-		{:else if purifyedLink}
+		{:else if purifiedLink}
 			<Button
 				class="mx-auto my-2 w-full"
 				data-umami-event="Purify copy button"
@@ -177,8 +168,17 @@
 				on:click={pasteFromClipboard}>Paste link</Button
 			>
 		{/if}
-		<div data-aos="fade-up" data-aos-delay="250" class="flex space-x-2">
-			<Label for="direct-link">Open link directly</Label>
+		<div
+			data-aos="fade-up"
+			data-aos-delay="250"
+			class="flex w-full items-center justify-between space-x-4 rounded-md border p-4"
+		>
+			<div class="flex flex-col items-start justify-center space-y-1">
+				<Label for="direct-link" class="text-sm font-medium leading-none">Open link</Label>
+				<Label for="direct-link" class="text-sm text-muted-foreground">
+					Open link directly after purify
+				</Label>
+			</div>
 			<Switch id="direct-link" bind:checked={directLink} />
 		</div>
 	</form>
