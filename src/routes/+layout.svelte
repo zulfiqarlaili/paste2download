@@ -64,7 +64,10 @@
 	});
 
 	onMount(() => {
-		AOS.init();
+		AOS.init({
+			duration: 800, // controls the duration of the animation (in ms)
+			once: true,    // whether animation should happen only once - while scrolling down
+		});
 		user = getLoginUser();
 		if (user) goto('/paste-link');
 		if (localStorage.getItem('isFirstTime') === 'false') {
