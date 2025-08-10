@@ -207,36 +207,41 @@
 	});
 </script>
 
-<div class="flex h-screen flex-col items-center p-5">
-	<h1 class="mb-8 mt-20 max-w-md text-center text-4xl font-bold">
+<div class="flex min-h-screen flex-col items-center p-4 sm:p-6 lg:p-8">
+	<h1 class="mb-8 mt-16 text-center text-3xl font-bold md:text-4xl lg:text-5xl">
 		Download videos from any website
 	</h1>
+	<p class="mb-8 max-w-2xl text-center text-gray-500 dark:text-gray-400 text-lg">
+		Paste your video URL below to quickly get download options for various platforms.
+	</p>
+
 	<form
-		class="mb-8 flex w-full max-w-md items-center space-x-2"
+		class="mb-6 flex w-full max-w-md items-center space-x-2"
 		on:submit|preventDefault={handleSubmit}
 	>
-		<div class="relative w-full">
+		<div class="relative flex-1">
 			<Input
 				bind:value={link}
 				type="text"
 				placeholder="Enter video URL here..."
-				class=" p-7 text-lg"
+				class="w-full rounded-lg border p-3 pr-12 text-base focus:ring-2 focus:ring-primary focus:border-transparent"
 			/>
 			<Button
 				data-umami-event="Clipboard paste button"
-				variant="secondary"
+				variant="ghost"
 				size="icon"
-				class="absolute right-2 top-1/2 -translate-y-1/2 transform "
+				class="absolute right-2 top-1/2 -translate-y-1/2 transform text-muted-foreground hover:bg-transparent hover:text-primary"
 				on:click={pasteFromClipboard}
 			>
-				<ClipboardPaste class="h-6 w-6 text-muted-foreground" />
+				<ClipboardPaste class="h-5 w-5" />
 			</Button>
 		</div>
 	</form>
+
 	<Dialog.Root>
 		<Dialog.Trigger>
 			<p
-				class="md:text-md mb-6 max-w-2xl font-light text-gray-500 dark:text-gray-400 lg:mb-8 lg:text-lg"
+				class="mb-8 cursor-pointer text-sm text-primary hover:underline md:text-base"
 			>
 				We support many websites ⓘ
 			</p>
@@ -257,34 +262,35 @@
 			</Dialog.Header>
 		</Dialog.Content>
 	</Dialog.Root>
+
 	<Button
 		data-umami-event="Get info button"
-		class="mx-auto w-full max-w-md"
+		class="w-full max-w-md py-3 text-lg font-semibold"
 		disabled={!isValidLink(link) || isLoading}
 		on:click={handleSubmit}
 		type="submit"
 	>
 		{#if isLoading}
-			<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+			<Loader2 class="mr-2 h-5 w-5 animate-spin" />
 		{:else}
 			<span>Get video</span>
 		{/if}
 	</Button>
+
 	{#if isLoading}
-		<div class="w-full max-w-md space-y-2 px-5 pb-6">
-			<Separator class="my-8" />
-			<Skeleton class="h-[250px] " />
-			<Skeleton class="h-4 w-[250px]" />
-			<Skeleton class="h-4 w-[200px]" />
+		<div class="mt-8 w-full max-w-md space-y-4 rounded-lg border p-6 shadow-sm">
+			<Skeleton class="h-[200px] w-full rounded-md" />
+			<Skeleton class="h-5 w-3/4" />
+			<Skeleton class="h-4 w-1/2" />
 		</div>
 	{/if}
+
 	{#if thumbNail}
-		<Separator class="my-8" />
-		<div class="mx-auto max-w-md px-5">
-			<p class="mx-auto mb-6 mt-4 max-w-md text-center text-2xl font-medium">{title}</p>
+		<div class="mt-8 w-full max-w-md rounded-lg border p-6 shadow-sm">
+			<p class="mb-4 text-center text-xl font-medium md:text-2xl">{title}</p>
 			{#if isShowThumbnail}
 				<img
-					class="mx-auto mb-6 rounded-lg shadow-md"
+					class="mx-auto mb-6 w-full rounded-lg shadow-md"
 					src={thumbNail}
 					alt={title}
 					on:error={() => {
@@ -292,153 +298,157 @@
 					}}
 				/>
 			{:else}
-				<video class="mb-6 rounded-lg shadow-md" controls src={downloadUrl}
+				<video class="mx-auto mb-6 w-full rounded-lg shadow-md" controls src={downloadUrl}
 					><track kind="captions" /></video
 				>
 			{/if}
-			<Button
-				data-umami-event="Download button"
-				class="mx-auto mb-4 w-full max-w-md"
-				disabled={isLoadingVideo}
-				on:click={() => handleDownloadMedia('video')}
-			>
-				{#if isLoadingVideo}
-					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-				{:else}
-					<span>Download video</span>
-					<Video class="ml-2 h-5 w-5" />
-				{/if}
-			</Button>
-			{#if video_id}
+
+			<div class="grid gap-3">
 				<Button
-					data-umami-event="Download HD button"
-					class="mx-auto mb-4 w-full max-w-md"
-					disabled={isLoadingVideoHD}
-					on:click={() => handleDownloadMedia('videoHD')}
+					data-umami-event="Download button"
+					class="w-full py-3 text-base"
+					disabled={isLoadingVideo}
+					on:click={() => handleDownloadMedia('video')}
 				>
-					{#if isLoadingVideoHD}
-						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+					{#if isLoadingVideo}
+						<Loader2 class="mr-2 h-5 w-5 animate-spin" />
 					{:else}
-						<span>Download HD video</span>
+						<span>Download video</span>
 						<Video class="ml-2 h-5 w-5" />
 					{/if}
 				</Button>
-			{/if}
-			<Separator class="mb-3" />
-			<Button
-				data-umami-event="Download audio button"
-				class="mx-auto mb-4 w-full max-w-md"
-				disabled={isLoadingAudio}
-				on:click={() => handleDownloadMedia('audio')}
-			>
-				{#if isLoadingAudio}
-					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-				{:else}
-					<span>Download audio</span>
-					<Music class="ml-2 h-5 w-5" />
+				{#if video_id}
+					<Button
+						data-umami-event="Download HD button"
+						class="w-full py-3 text-base"
+						disabled={isLoadingVideoHD}
+						on:click={() => handleDownloadMedia('videoHD')}
+					>
+						{#if isLoadingVideoHD}
+							<Loader2 class="mr-2 h-5 w-5 animate-spin" />
+						{:else}
+							<span>Download HD video</span>
+							<Video class="ml-2 h-5 w-5" />
+						{/if}
+					</Button>
 				{/if}
-			</Button>
-			{#if user}
-				{#if $isDesktop}
-					<Dialog.Root bind:open>
-						<Dialog.Trigger asChild let:builder>
-							<Button variant="secondary" class="mx-auto mb-4 w-full max-w-md" builders={[builder]}>
-								<span>Post to X</span>
+				<Separator class="my-2" />
+				<Button
+					data-umami-event="Download audio button"
+					class="w-full py-3 text-base"
+					disabled={isLoadingAudio}
+					on:click={() => handleDownloadMedia('audio')}
+				>
+					{#if isLoadingAudio}
+						<Loader2 class="mr-2 h-5 w-5 animate-spin" />
+					{:else}
+						<span>Download audio</span>
+						<Music class="ml-2 h-5 w-5" />
+					{/if}
+				</Button>
+
+				{#if user}
+					{#if $isDesktop}
+						<Dialog.Root bind:open>
+							<Dialog.Trigger asChild let:builder>
+								<Button variant="secondary" class="w-full py-3 text-base" builders={[builder]}>
+									<span>Post to X</span>
+								</Button>
+							</Dialog.Trigger>
+							<Dialog.Content class="sm:max-w-[425px]">
+								<form class="grid items-start gap-4 px-4">
+									<Textarea
+										bind:value={caption}
+										placeholder="Video caption is optional..."
+										class="resize-none"
+										data-characters-left={Math.max(0, 280 - (caption ? caption.length : 0))}
+									/>
+									<p
+										class={`text-right text-sm text-gray-500 dark:text-gray-400 ${caption && caption.length > 280 ? 'text-red-500' : ''} ${caption && caption.length > 280 ? 'dark:text-red-500' : ''}`}
+									>
+										{280 - (caption ? caption.length : 0)}
+										{caption && caption.length > 280
+											? 'characters left (too long)'
+											: 'characters left'}
+									</p>
+									<Button
+										data-umami-event="Social post button"
+										type="submit"
+										disabled={caption ? caption.length > 280 : false}
+										on:click={handlePostSocialMedia}
+									>
+										<span>Post</span>
+									</Button>
+									<Button variant="outline" on:click={() => (open = false)}>Cancel</Button>
+								</form>
+							</Dialog.Content>
+						</Dialog.Root>
+					{:else}
+						<Drawer.Root bind:open>
+							<Drawer.Trigger asChild let:builder>
+								<Button variant="secondary" class="w-full py-3 text-base" builders={[builder]}>
+									<span>Post</span>
+								</Button>
+							</Drawer.Trigger>
+							<Drawer.Content>
+								<form class="grid items-start gap-4 px-4">
+									<Textarea
+										bind:value={caption}
+										placeholder="Video caption is optional..."
+										class="resize-none"
+										data-characters-left={Math.max(0, 280 - (caption ? caption.length : 0))}
+                  on:keydown={handleKeyPress}
+									/>
+									<p
+										class={`text-right text-sm text-gray-500 dark:text-gray-400 ${caption && caption.length > 280 ? 'text-red-500' : ''} ${caption && caption.length > 280 ? 'dark:text-red-500' : ''}`}
+									>
+										{280 - (caption ? caption.length : 0)}
+										{caption && caption.length > 280
+											? 'characters left (too long)'
+											: 'characters left'}
+									</p>
+									<Button
+										data-umami-event="Social post button"
+										type="submit"
+										disabled={caption ? caption.length > 280 : false}
+										on:click={handlePostSocialMedia}
+									>
+										<span>Post</span>
+									</Button>
+								</form>
+								<Drawer.Footer class="pt-2">
+									<Drawer.Close asChild let:builder>
+										<Button variant="outline" builders={[builder]}>Cancel</Button>
+									</Drawer.Close>
+								</Drawer.Footer>
+							</Drawer.Content>
+						</Drawer.Root>
+						<div id="bottom-anchor" />
+					{/if}
+				{:else}
+					<Dialog.Root>
+						<Dialog.Trigger class="block w-full">
+							<Button
+								data-umami-event="Social login button"
+								variant="secondary"
+								class="w-full py-3 text-base"
+							>
+								Login to Share
 							</Button>
 						</Dialog.Trigger>
-						<Dialog.Content class="sm:max-w-[425px]">
-							<form class="grid items-start gap-4 px-4">
-								<Textarea
-									bind:value={caption}
-									placeholder="Video caption is optional..."
-									class="resize-none"
-									data-characters-left={Math.max(0, 280 - (caption ? caption.length : 0))}
-								/>
-								<p
-									class={`text-right text-sm text-gray-500 dark:text-gray-400 ${caption && caption.length > 280 ? 'text-red-500' : ''} ${caption && caption.length > 280 ? 'dark:text-red-500' : ''}`}
-								>
-									{280 - (caption ? caption.length : 0)}
-									{caption && caption.length > 280
-										? 'characters left (too long)'
-										: 'characters left'}
-								</p>
-								<Button
-									data-umami-event="Social post button"
-									type="submit"
-									disabled={caption ? caption.length > 280 : false}
-									on:click={handlePostSocialMedia}
-								>
-									<span>Post</span>
-								</Button>
-								<Button variant="outline" on:click={() => (open = false)}>Cancel</Button>
-							</form>
+						<Dialog.Content class="max-w-xs rounded-2xl text-center">
+							<Dialog.Header>
+								<Dialog.Title>Login with social media</Dialog.Title>
+								<Dialog.Description>
+									<div class="mx-auto mt-4 flex max-w-[10rem] flex-col justify-center space-y-2">
+										<Button variant="outline" on:click={handleSocialLogin}>X (Twitter)</Button>
+									</div>
+								</Dialog.Description>
+							</Dialog.Header>
 						</Dialog.Content>
 					</Dialog.Root>
-				{:else}
-					<Drawer.Root bind:open>
-						<Drawer.Trigger asChild let:builder>
-							<Button variant="secondary" class="mx-auto mb-4 w-full max-w-md" builders={[builder]}>
-								<span>Post</span>
-							</Button>
-						</Drawer.Trigger>
-						<Drawer.Content>
-							<form class="grid items-start gap-4 px-4">
-								<Textarea
-									bind:value={caption}
-									placeholder="Video caption is optional..."
-									class="resize-none"
-									data-characters-left={Math.max(0, 280 - (caption ? caption.length : 0))}
-                  on:keydown={handleKeyPress}
-								/>
-								<p
-									class={`text-right text-sm text-gray-500 dark:text-gray-400 ${caption && caption.length > 280 ? 'text-red-500' : ''} ${caption && caption.length > 280 ? 'dark:text-red-500' : ''}`}
-								>
-									{280 - (caption ? caption.length : 0)}
-									{caption && caption.length > 280
-										? 'characters left (too long)'
-										: 'characters left'}
-								</p>
-								<Button
-									data-umami-event="Social post button"
-									type="submit"
-									disabled={caption ? caption.length > 280 : false}
-									on:click={handlePostSocialMedia}
-								>
-									<span>Post</span>
-								</Button>
-							</form>
-							<Drawer.Footer class="pt-2">
-								<Drawer.Close asChild let:builder>
-									<Button variant="outline" builders={[builder]}>Cancel</Button>
-								</Drawer.Close>
-							</Drawer.Footer>
-						</Drawer.Content>
-					</Drawer.Root>
-					<div id="bottom-anchor" />
 				{/if}
-			{:else}
-				<Dialog.Root>
-					<Dialog.Trigger class="mx-auto mb-20 block w-full max-w-md">
-						<Button
-							data-umami-event="Social login button"
-							variant="secondary"
-							class="w-full max-w-md"
-						>
-							Login to Share
-						</Button>
-					</Dialog.Trigger>
-					<Dialog.Content class="max-w-xs rounded-2xl text-center">
-						<Dialog.Header>
-							<Dialog.Title>Login with social media</Dialog.Title>
-							<Dialog.Description>
-								<div class="mx-auto mt-4 flex max-w-[10rem] flex-col justify-center space-y-2">
-									<Button variant="outline" on:click={handleSocialLogin}>X (Twitter)</Button>
-								</div>
-							</Dialog.Description>
-						</Dialog.Header>
-					</Dialog.Content>
-				</Dialog.Root>
-			{/if}
+			</div>
 		</div>
 	{/if}
 	<AlertDialog.Root bind:open={infoDialog}>
