@@ -221,21 +221,11 @@
 				<form transition:fade="{{ duration: 200 }}" class="w-full flex flex-col space-y-4" on:submit|preventDefault={handleSubmit}>
 					<div class="relative w-full shadow-sm rounded-lg group">
 						<Input
-							class="w-full rounded-lg border p-4 pr-12 text-base transition-colors hover:border-primary/50 focus-visible:ring-1 focus-visible:ring-primary/50"
+							class="w-full rounded-lg border p-4 text-base transition-colors hover:border-primary/50 focus-visible:ring-1 focus-visible:ring-primary/50"
 							bind:value={link}
 							type="text"
 							placeholder="Paste TikTok link here..."
 						/>
-						<Button
-							type="button"
-							variant="ghost"
-							size="icon"
-							class="absolute right-2 top-1/2 -translate-y-1/2 transform text-muted-foreground hover:bg-transparent hover:text-primary transition-colors"
-							on:click={pasteFromClipboard}
-							title="Paste from clipboard"
-						>
-							<ClipboardPaste class="h-5 w-5" />
-						</Button>
 					</div>
 
 					{#if link && !isValidLink(link)}
