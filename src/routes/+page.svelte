@@ -76,7 +76,7 @@
 		<h2
 			class="mb-4 text-3xl font-extrabold leading-tight tracking-tight md:text-4xl lg:text-5xl"
 		>
-			Why Use Paste2Download?
+			Why Use TTClip?
 		</h2>
 		<p class="mx-auto mb-16 max-w-3xl text-lg text-muted-foreground">
 			The easiest way to remove watermarks from TikTok videos and repurpose your content.

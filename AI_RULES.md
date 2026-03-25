@@ -1,6 +1,6 @@
-# AI Rules for Paste2Download Application
+# AI Rules for TTClip Application
 
-This document outlines the core technologies and libraries used in the Paste2Download application, along with guidelines for their usage.
+This document outlines the core technologies and libraries used in the TTClip application, along with guidelines for their usage.
 
 ## Tech Stack
 

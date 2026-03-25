@@ -1,6 +1,6 @@
-# Paste 2 Download
+# TTClip
 
-Paste 2 Download is an advanced utility designed to facilitate the downloading of videos from TikTok and other comparable platforms, with the added capability of removing watermarks for a cleaner viewing experience.
+TTClip is an advanced utility designed to facilitate the downloading of videos from TikTok and other comparable platforms, with the added capability of removing watermarks for a cleaner viewing experience.
 
 ## Installation
 
